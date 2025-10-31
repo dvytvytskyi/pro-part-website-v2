@@ -4702,12 +4702,10 @@ hr {
         display: none !important;
     }
     
-    .adapriveFilters__bg {
-        display: none !important;
-    }
-    
-    .adapriveFilters__bg.active {
-        display: none !important;
+    /* Модалка фільтрів на карті повинна працювати - НЕ приховуємо */
+    .wrapperMapPage .adapriveFilters__bg.active,
+    body[class*="map"] .adapriveFilters__bg.active {
+        display: flex !important;
     }
     
     .filterPropertiesWrapper__adapriveWrapper {
