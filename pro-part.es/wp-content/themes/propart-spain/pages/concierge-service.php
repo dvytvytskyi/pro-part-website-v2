@@ -3071,7 +3071,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const headerContainer = document.getElementById("header");
   const feedbackFormContainer = document.getElementById("feedbackBlock");
   const footerContainer = document.getElementById("footer");
-	getProjectsToMap()
+	// getProjectsToMap() - removed
   headerContainer.appendChild(Header());
   feedbackFormContainer.appendChild(FeedbackForm());
   footerContainer.appendChild(Footer());
