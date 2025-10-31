@@ -17,9 +17,6 @@ get_header();
 ?>
 <link rel="stylesheet" href="<?php echo get_template_directory_uri(); ?>/assets/liked-properties.css">
 <script src="<?php echo get_template_directory_uri(); ?>/js/simple-likes.js"></script>
-<!-- jsPDF library for PDF export -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <main id="main-content">
 	<nav id="bottom-navbar" class="bottom-nav">
 	</nav>
@@ -42,7 +39,6 @@ get_header();
             </div>
 			<div class="fav-buttons">
 				<button class="copy_link">Copy link</button>
-				<button id="export_pdf" class="filtersMap__clearBtn" style="background-color: #2196F3;">Export PDF</button>
 				<button id="clear_favourites" class="filtersMap__clearBtn">Clear</button>
 			</div>
         </div>
@@ -86,183 +82,6 @@ document.querySelector('#clear_favourites').addEventListener('click', () => {
     updateLikedCountTitle();
 });
 
-// Export to PDF functionality
-document.querySelector('#export_pdf').addEventListener('click', async () => {
-    const button = document.querySelector('#export_pdf');
-    const originalText = button.textContent;
-    
-    try {
-        button.textContent = 'Generating PDF...';
-        button.disabled = true;
-        
-        // Get favorite projects from localStorage
-        const favoriteProjects = JSON.parse(localStorage.getItem('favoriteProjects')) || [];
-        const favoriteSecondaryProjects = JSON.parse(localStorage.getItem('favoriteSecondaryProjects')) || [];
-        
-        if (favoriteProjects.length === 0 && favoriteSecondaryProjects.length === 0) {
-            alert('No favorite projects to export');
-            button.textContent = originalText;
-            button.disabled = false;
-            return;
-        }
-        
-        // Initialize jsPDF
-        const { jsPDF } = window.jspdf;
-        const doc = new jsPDF();
-        
-        let yPosition = 20;
-        const pageHeight = doc.internal.pageSize.height;
-        const margin = 20;
-        const lineHeight = 7;
-        
-        // Add title
-        doc.setFontSize(20);
-        doc.setFont(undefined, 'bold');
-        doc.text('Pro-Part - Favorite Projects', margin, yPosition);
-        yPosition += 15;
-        
-        // Add date
-        doc.setFontSize(10);
-        doc.setFont(undefined, 'normal');
-        doc.text(`Generated: ${new Date().toLocaleDateString()}`, margin, yPosition);
-        yPosition += 10;
-        
-        // Add separator line
-        doc.setDrawColor(200, 200, 200);
-        doc.line(margin, yPosition, 190, yPosition);
-        yPosition += 10;
-        
-        // Function to add a project to PDF
-        const addProjectToPDF = (project, index, type) => {
-            // Check if we need a new page
-            if (yPosition > pageHeight - 60) {
-                doc.addPage();
-                yPosition = 20;
-            }
-            
-            // Project number and type
-            doc.setFontSize(14);
-            doc.setFont(undefined, 'bold');
-            doc.text(`${index + 1}. ${project.development_name || project.name || 'Project'}`, margin, yPosition);
-            yPosition += 8;
-            
-            // Type badge
-            doc.setFontSize(9);
-            doc.setFont(undefined, 'normal');
-            doc.setTextColor(100, 100, 100);
-            doc.text(`[${type}]`, margin, yPosition);
-            yPosition += 8;
-            doc.setTextColor(0, 0, 0);
-            
-            // Location
-            doc.setFontSize(10);
-            const location = [project.town, project.province, project.country].filter(Boolean).join(', ');
-            if (location) {
-                doc.text(`Location: ${location}`, margin + 5, yPosition);
-                yPosition += lineHeight;
-            }
-            
-            // Price
-            if (project.price) {
-                doc.setFont(undefined, 'bold');
-                doc.text(`Price: ${project.currency || 'EUR'} ${project.price.toLocaleString()}`, margin + 5, yPosition);
-                doc.setFont(undefined, 'normal');
-                yPosition += lineHeight;
-            }
-            
-            // Details
-            const details = [];
-            if (project.beds) details.push(`${project.beds} beds`);
-            if (project.baths) details.push(`${project.baths} baths`);
-            if (project.built_area) details.push(`${project.built_area} m²`);
-            if (project.plot_area) details.push(`${project.plot_area} m² plot`);
-            
-            if (details.length > 0) {
-                doc.text(`Details: ${details.join(' • ')}`, margin + 5, yPosition);
-                yPosition += lineHeight;
-            }
-            
-            // Description
-            if (project.description) {
-                doc.setFontSize(9);
-                const descriptionLines = doc.splitTextToSize(project.description.substring(0, 200) + '...', 170);
-                descriptionLines.slice(0, 3).forEach(line => {
-                    if (yPosition > pageHeight - 20) {
-                        doc.addPage();
-                        yPosition = 20;
-                    }
-                    doc.text(line, margin + 5, yPosition);
-                    yPosition += 5;
-                });
-                doc.setFontSize(10);
-            }
-            
-            yPosition += 5;
-            
-            // Add separator
-            doc.setDrawColor(230, 230, 230);
-            doc.line(margin, yPosition, 190, yPosition);
-            yPosition += 8;
-        };
-        
-        // Add Off-Plan Projects
-        if (favoriteProjects.length > 0) {
-            doc.setFontSize(16);
-            doc.setFont(undefined, 'bold');
-            doc.text('Off-Plan Projects', margin, yPosition);
-            yPosition += 10;
-            doc.setFont(undefined, 'normal');
-            
-            favoriteProjects.forEach((project, index) => {
-                addProjectToPDF(project, index, 'Off-Plan');
-            });
-        }
-        
-        // Add Secondary Projects
-        if (favoriteSecondaryProjects.length > 0) {
-            if (favoriteProjects.length > 0) {
-                yPosition += 5;
-            }
-            
-            doc.setFontSize(16);
-            doc.setFont(undefined, 'bold');
-            doc.text('Secondary Market Projects', margin, yPosition);
-            yPosition += 10;
-            doc.setFont(undefined, 'normal');
-            
-            favoriteSecondaryProjects.forEach((project, index) => {
-                addProjectToPDF(project, index, 'Secondary');
-            });
-        }
-        
-        // Add footer to all pages
-        const totalPages = doc.internal.getNumberOfPages();
-        for (let i = 1; i <= totalPages; i++) {
-            doc.setPage(i);
-            doc.setFontSize(8);
-            doc.setTextColor(150, 150, 150);
-            doc.text(`Page ${i} of ${totalPages}`, margin, pageHeight - 10);
-            doc.text('Pro-Part.es | +34 695 113 333', 105, pageHeight - 10, { align: 'center' });
-        }
-        
-        // Save the PDF
-        const fileName = `ProPart_Favorites_${new Date().toISOString().split('T')[0]}.pdf`;
-        doc.save(fileName);
-        
-        button.textContent = 'Exported!';
-        setTimeout(() => {
-            button.textContent = originalText;
-            button.disabled = false;
-        }, 2000);
-        
-    } catch (error) {
-        console.error('Error generating PDF:', error);
-        alert('Error generating PDF. Please try again.');
-        button.textContent = originalText;
-        button.disabled = false;
-    }
-});
-	
 const path = window.location.pathname.split('/');
 let language = ''; 
 
