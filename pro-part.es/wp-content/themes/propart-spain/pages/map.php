@@ -225,29 +225,39 @@
                     </button>
                 </div>
                 <div class="adapriveFilters__main">
-                    <div class="adapriveFilters__main-buttons map">
-                        <div class="adapriveFilters__main-btn active" id="offPlanAdaptiveBtn">
-                            Off plan
-                        </div>
-                        <div class="adapriveFilters__main-btn" id="secondaryAdaptiveBtn">
-                            Secondary
-                        </div>
-                        <div class="adapriveFilters__main-btn" id="rentAdaptiveBtn">
-                            Rent
-                        </div>
-                    </div>
-                    
-                    <!-- Rent Type Filter for Mobile -->
-                    <div class="adapriveFilters__rent-type-mobile" id="mapRentTypeMobile" style="display: none; margin-top: 16px;">
+                    <div>
                         <div class="adapriveFilters__main-buttons map">
-                            <div class="adapriveFilters__main-btn active" id="rentLongTermMobileBtn" data-rent-type="long">
-                                Long term
+                            <div class="adapriveFilters__main-btn active" id="offPlanAdaptiveBtn">
+                                Off plan
                             </div>
-                            <div class="adapriveFilters__main-btn" id="rentShortTermMobileBtn" data-rent-type="short">
-                                Short term
+                            <div class="adapriveFilters__main-btn" id="secondaryAdaptiveBtn">
+                                Secondary
+                            </div>
+                            <div class="adapriveFilters__main-btn" id="rentAdaptiveBtn">
+                                Rent
+                            </div>
+                        </div>
+                        
+                        <!-- Rent Type Filter for Mobile -->
+                        <div class="adapriveFilters__rent-type-mobile" id="mapRentTypeMobile" style="display: none; margin-top: 16px;">
+                            <div class="adapriveFilters__main-buttons map">
+                                <div class="adapriveFilters__main-btn active" id="rentLongTermMobileBtn" data-rent-type="long">
+                                    Long term
+                                </div>
+                                <div class="adapriveFilters__main-btn" id="rentShortTermMobileBtn" data-rent-type="short">
+                                    Short term
+                                </div>
                             </div>
                         </div>
                     </div>
+                </div>
+                <div class="adapriveFilters__main-buttonsBottom">
+                    <button class="adapriveFilters__main-btnClear" id="clearBtnMapFilterAdaptive">
+                        Clear
+                    </button>
+                    <button class="adapriveFilters__main-btnConfirm" id="btnMapConfrimFilterAdaptive">
+                        Confirm
+                    </button>
                 </div>
             </div>
         </div>
@@ -7555,76 +7565,46 @@ function hidePolygonProjectsList() {
 
                 // mobile
                 function setupModalHandlers() {
-                    console.log("setupModalHandlers викликано");
-                    console.log("document.readyState:", document.readyState);
-                    
                     const filterButton = document.getElementById("filterMobile");
                     const filterButton2 = document.getElementById("filterMobilePhone");
                     const modalAdaptiveFilters = document.getElementById("modalAdaptiveFilters");
                     const closeButton = document.querySelector(".adapriveFilters__header-btnClose");
-
-                    console.log("Setup Modal Handlers - шукаємо елементи:", {
-                        filterButton: filterButton,
-                        filterButton2: filterButton2,
-                        modalAdaptiveFilters: modalAdaptiveFilters,
-                        closeButton: closeButton
-                    });
-                    
-                    console.log("Всі кнопки на сторінці з 'filter':", 
-                        Array.from(document.querySelectorAll('[id*="filter"]')).map(el => ({id: el.id, classes: el.className}))
-                    );
+                    const confirmButton = document.getElementById("btnMapConfrimFilterAdaptive");
 
                     if (!modalAdaptiveFilters) {
-                        console.error("Modal element #modalAdaptiveFilters not found!");
-                        return;
-                    }
-                    
-                    if (!filterButton && !filterButton2) {
-                        console.error("Жодна з кнопок фільтра не знайдена!");
+                        console.error("Modal element not found!");
                         return;
                     }
 
                     const openModal = () => {
-                        console.log("Opening modal, window width:", window.innerWidth);
                         modalAdaptiveFilters.classList.add("active");
-                        document.body.style.overflow = "hidden"; // Prevent background scroll
-                        console.log("Modal classes:", modalAdaptiveFilters.className);
+                        document.body.style.overflow = "hidden";
                     };
 
                     const closeModal = () => {
-                        console.log("Closing modal");
                         modalAdaptiveFilters.classList.remove("active");
-                        document.body.style.overflow = ""; // Restore background scroll
+                        document.body.style.overflow = "";
                     };
 
                     if (filterButton) {
-                        filterButton.addEventListener("click", (e) => {
-                            console.log("Filter button clicked");
-                            e.preventDefault();
-                            openModal();
-                        });
+                        filterButton.addEventListener("click", openModal);
                     }
                     
                     if (filterButton2) {
-                        filterButton2.addEventListener("click", (e) => {
-                            console.log("Filter button 2 clicked");
-                            e.preventDefault();
-                            openModal();
-                        });
+                        filterButton2.addEventListener("click", openModal);
                     }
                     
                     if (closeButton) {
-                        closeButton.addEventListener("click", (e) => {
-                            console.log("Close button clicked");
-                            e.preventDefault();
-                            closeModal();
-                        });
+                        closeButton.addEventListener("click", closeModal);
+                    }
+                    
+                    if (confirmButton) {
+                        confirmButton.addEventListener("click", closeModal);
                     }
 
                     // Close modal if clicking outside of it
                     modalAdaptiveFilters.addEventListener("click", (e) => {
                         if (e.target === modalAdaptiveFilters) {
-                            console.log("Clicked outside modal content");
                             closeModal();
                         }
                     });

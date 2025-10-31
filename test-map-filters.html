@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Map Filters - Full Simulation</title>
+    <link rel="stylesheet" href="pro-part.es/wp-content/themes/propart-spain/style.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+        .debug-panel {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            background: white;
+            border: 2px solid #333;
+            padding: 15px;
+            z-index: 99999;
+            max-width: 300px;
+            font-size: 12px;
+        }
+        .debug-panel h3 {
+            margin: 0 0 10px 0;
+            font-size: 14px;
+        }
+        .debug-panel button {
+            margin: 5px 0;
+            padding: 8px;
+            width: 100%;
+        }
+        .status-ok { color: green; }
+        .status-error { color: red; }
+    </style>
+</head>
+<body>
+    <div class="wrapperMapPage">
+        <!-- Debug Panel -->
+        <div class="debug-panel">
+            <h3>🔍 Debug Panel</h3>
+            <div id="debugInfo"></div>
+            <button onclick="runDiagnostics()">🔍 Run Diagnostics</button>
+            <button onclick="testModal()">✅ Test Modal</button>
+            <button onclick="simulateClick()">👆 Simulate Button Click</button>
+        </div>
+
+        <!-- Filter Bar (like in map.php) -->
+        <div class="filterPropertiesWrapper">
+            <div class="filtersMap__tablet">
+                <button class="filtersMap__tablet-btn" id="filterMobile">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                        <path d="M2.5 5.8335H5M5 5.8335C5 7.21421 6.11929 8.3335 7.5 8.3335C8.88071 8.3335 10 7.21421 10 5.8335C10 4.45278 8.88071 3.3335 7.5 3.3335C6.11929 3.3335 5 4.45278 5 5.8335ZM2.5 14.1668H7.5M15 14.1668L17.5 14.1668M15 14.1668C15 15.5475 13.8807 16.6668 12.5 16.6668C11.1193 16.6668 10 15.5475 10 14.1668C10 12.7861 11.1193 11.6668 12.5 11.6668C13.8807 11.6668 15 12.7861 15 14.1668ZM12.5 5.8335L17.5 5.8335"
+                            stroke="#717171" stroke-width="1.5" stroke-linecap="round" />
+                    </svg>
+                    <span>Filter</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Alternative button location (bottom right like in real map) -->
+        <div class="wrapperMapPage__drawWrapper">
+            <button class="filtersMap__tablet-btn" id="filterMobilePhone">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                    <path d="M2.5 5.8335H5M5 5.8335C5 7.21421 6.11929 8.3335 7.5 8.3335C8.88071 8.3335 10 7.21421 10 5.8335C10 4.45278 8.88071 3.3335 7.5 3.3335C6.11929 3.3335 5 4.45278 5 5.8335ZM2.5 14.1668H7.5M15 14.1668L17.5 14.1668M15 14.1668C15 15.5475 13.8807 16.6668 12.5 16.6668C11.1193 16.6668 10 15.5475 10 14.1668C10 12.7861 11.1193 11.6668 12.5 11.6668C13.8807 11.6668 15 12.7861 15 14.1668ZM12.5 5.8335L17.5 5.8335"
+                        stroke="#313131" stroke-width="1.5" stroke-linecap="round" />
+                </svg>
+            </button>
+        </div>
+
+        <!-- Modal (exact copy from map.php) -->
+        <div class="adapriveFilters__bg" id="modalAdaptiveFilters">
+            <div class="adapriveFilters">
+                <div class="adapriveFilters__header">
+                    <h2 class="adapriveFilters__header-title">Filter</h2>
+                    <button class="adapriveFilters__header-btnClose">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                            <path d="M14.1667 5.83355L5.83337 14.1668M14.1667 14.1668L5.83337 5.8335" stroke="#313131"
+                                stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                    </button>
+                </div>
+                <div class="adapriveFilters__main">
+                    <div class="adapriveFilters__main-buttons map">
+                        <div class="adapriveFilters__main-btn active" id="offPlanAdaptiveBtn">
+                            Off plan
+                        </div>
+                        <div class="adapriveFilters__main-btn" id="secondaryAdaptiveBtn">
+                            Secondary
+                        </div>
+                        <div class="adapriveFilters__main-btn" id="rentAdaptiveBtn">
+                            Rent
+                        </div>
+                    </div>
+                    
+                    <div class="adapriveFilters__rent-type-mobile" id="mapRentTypeMobile" style="display: none; margin-top: 16px;">
+                        <div class="adapriveFilters__main-buttons map">
+                            <div class="adapriveFilters__main-btn active" id="rentLongTermMobileBtn" data-rent-type="long">
+                                Long term
+                            </div>
+                            <div class="adapriveFilters__main-btn" id="rentShortTermMobileBtn" data-rent-type="short">
+                                Short term
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function updateDebugInfo(info) {
+            document.getElementById('debugInfo').innerHTML = info;
+        }
+
+        function runDiagnostics() {
+            const filterButton = document.getElementById("filterMobile");
+            const filterButton2 = document.getElementById("filterMobilePhone");
+            const modalAdaptiveFilters = document.getElementById("modalAdaptiveFilters");
+            const closeButton = document.querySelector(".adapriveFilters__header-btnClose");
+
+            let info = '<h4>Element Status:</h4>';
+            info += `filterMobile: <span class="${filterButton ? 'status-ok' : 'status-error'}">${filterButton ? '✅ Found' : '❌ Not Found'}</span><br>`;
+            if (filterButton) {
+                const computed = window.getComputedStyle(filterButton);
+                info += `  - display: ${computed.display}<br>`;
+                info += `  - visibility: ${computed.visibility}<br>`;
+                info += `  - opacity: ${computed.opacity}<br>`;
+            }
+            
+            info += `filterMobilePhone: <span class="${filterButton2 ? 'status-ok' : 'status-error'}">${filterButton2 ? '✅ Found' : '❌ Not Found'}</span><br>`;
+            if (filterButton2) {
+                const computed = window.getComputedStyle(filterButton2);
+                info += `  - display: ${computed.display}<br>`;
+                info += `  - visibility: ${computed.visibility}<br>`;
+            }
+            
+            info += `modalAdaptiveFilters: <span class="${modalAdaptiveFilters ? 'status-ok' : 'status-error'}">${modalAdaptiveFilters ? '✅ Found' : '❌ Not Found'}</span><br>`;
+            if (modalAdaptiveFilters) {
+                const computed = window.getComputedStyle(modalAdaptiveFilters);
+                info += `  - display: ${computed.display}<br>`;
+                info += `  - classes: ${modalAdaptiveFilters.className}<br>`;
+            }
+            
+            info += `closeButton: <span class="${closeButton ? 'status-ok' : 'status-error'}">${closeButton ? '✅ Found' : '❌ Not Found'}</span><br>`;
+            
+            info += `<br><strong>Window size:</strong> ${window.innerWidth}x${window.innerHeight}`;
+
+            updateDebugInfo(info);
+            console.log("Diagnostics complete");
+        }
+
+        function testModal() {
+            const modal = document.getElementById("modalAdaptiveFilters");
+            if (modal) {
+                modal.classList.add("active");
+                console.log("Modal opened manually");
+                updateDebugInfo("✅ Modal manually opened<br>Click outside or close button to close");
+            } else {
+                updateDebugInfo("❌ Modal element not found!");
+            }
+        }
+
+        function simulateClick() {
+            const btn = document.getElementById("filterMobile") || document.getElementById("filterMobilePhone");
+            if (btn) {
+                btn.click();
+                updateDebugInfo("✅ Button clicked");
+            } else {
+                updateDebugInfo("❌ No button found");
+            }
+        }
+
+        // Setup modal handlers (exact copy from map.php with fixes)
+        function setupModalHandlers() {
+            console.log("setupModalHandlers викликано");
+            console.log("document.readyState:", document.readyState);
+            
+            const filterButton = document.getElementById("filterMobile");
+            const filterButton2 = document.getElementById("filterMobilePhone");
+            const modalAdaptiveFilters = document.getElementById("modalAdaptiveFilters");
+            const closeButton = document.querySelector(".adapriveFilters__header-btnClose");
+
+            console.log("Elements found:", {
+                filterButton: !!filterButton,
+                filterButton2: !!filterButton2,
+                modalAdaptiveFilters: !!modalAdaptiveFilters,
+                closeButton: !!closeButton
+            });
+
+            if (!modalAdaptiveFilters) {
+                console.error("Modal element #modalAdaptiveFilters not found!");
+                return;
+            }
+            
+            if (!filterButton && !filterButton2) {
+                console.error("No filter buttons found!");
+                return;
+            }
+
+            const openModal = () => {
+                console.log("Opening modal");
+                modalAdaptiveFilters.classList.add("active");
+                document.body.style.overflow = "hidden";
+                console.log("Modal classes:", modalAdaptiveFilters.className);
+            };
+
+            const closeModal = () => {
+                console.log("Closing modal");
+                modalAdaptiveFilters.classList.remove("active");
+                document.body.style.overflow = "";
+            };
+
+            if (filterButton) {
+                filterButton.addEventListener("click", (e) => {
+                    console.log("Filter button clicked");
+                    e.preventDefault();
+                    openModal();
+                });
+                console.log("✅ filterButton listener attached");
+            }
+            
+            if (filterButton2) {
+                filterButton2.addEventListener("click", (e) => {
+                    console.log("Filter button 2 clicked");
+                    e.preventDefault();
+                    openModal();
+                });
+                console.log("✅ filterButton2 listener attached");
+            }
+            
+            if (closeButton) {
+                closeButton.addEventListener("click", (e) => {
+                    console.log("Close button clicked");
+                    e.preventDefault();
+                    closeModal();
+                });
+            }
+
+            modalAdaptiveFilters.addEventListener("click", (e) => {
+                if (e.target === modalAdaptiveFilters) {
+                    console.log("Clicked outside modal content");
+                    closeModal();
+                }
+            });
+        }
+
+        // Initialize when DOM is ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => {
+                setupModalHandlers();
+                runDiagnostics();
+            });
+        } else {
+            setupModalHandlers();
+            runDiagnostics();
+        }
+    </script>
+</body>
+</html>
+
