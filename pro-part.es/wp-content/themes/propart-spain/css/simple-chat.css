@@ -536,10 +536,7 @@
     }
     
     .simple-ai-btn {
-        bottom: 20px;
-        right: 20px;
-        padding: 12px 20px;
-        font-size: 14px;
+        display: none !important;
     }
     
     .simple-input-actions {
