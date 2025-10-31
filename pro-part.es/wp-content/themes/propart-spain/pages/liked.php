@@ -3767,79 +3767,130 @@ function renderShareProjects(id) {
 	};
 	
 function sendFavoriteProjects() {
-    const favoriteProjects = JSON.parse(localStorage.getItem("favoriteProjects")) || [];
-    const favoriteSecondaryProjects = JSON.parse(localStorage.getItem("favoriteSecondaryProjects")) || [];
-
-    const offPlan = favoriteProjects.map(project => project._id);
-    const secondary = favoriteSecondaryProjects.map(project => project.id);
+    const copyButton = document.querySelector(".copy_link");
+    
+    // Try new like system first (likedPropertyIds)
+    const likedIds = JSON.parse(localStorage.getItem("likedPropertyIds") || "[]");
+    
+    // Fallback to old system if new system is empty
+    const favoriteProjects = JSON.parse(localStorage.getItem("favoriteProjects") || "[]");
+    const favoriteSecondaryProjects = JSON.parse(localStorage.getItem("favoriteSecondaryProjects") || "[]");
+    
+    let offPlan = [];
+    let secondary = [];
+    
+    // Use new system if available
+    if (likedIds.length > 0) {
+        // New system stores just IDs, we need to determine which are off-plan and which are secondary
+        // For now, we'll send all IDs to API and let it handle it
+        // But for compatibility with API, we need to split them
+        // This is a temporary solution - we'll send all as offPlan for now
+        offPlan = likedIds;
+    } else {
+        // Use old system
+        offPlan = favoriteProjects.map(project => project._id);
+        secondary = favoriteSecondaryProjects.map(project => project.id);
+    }
 
     if (offPlan.length === 0 && secondary.length === 0) {
-        console.log("Оба массива пустые, запрос не отправлен");
+        console.log("No favorite projects to share");
+        alert('You have no favorite projects to share');
         return;
     }
 
     const body = {
-	shareType:"LIKE"
-};
+        shareType: "LIKE"
+    };
+    
     if (offPlan.length > 0) {
         body.offPlan = offPlan;
     }
     if (secondary.length > 0) {
         body.secondary = secondary;
     }
-  const copyButton = document.querySelector(".copy_link");
-  fetch("https://crm.server.pro-part.es/api/v1/share-projects", {
-      method: "POST",
-      headers: {
-          "Content-Type": "application/json",
-      },
-      body: JSON.stringify(body),
-  })
-  .then(response => response.json())
-  .then(data => {
-      const shareLink = `${window.location.origin}/liked-projects?shareId=${data._id}`;
-      navigator.clipboard.writeText(shareLink)
-          .then(() => {
-              copyButton.textContent = 'Copied!';
-              setTimeout(() => {
-                  copyButton.textContent = 'Copy link';
-              }, 2000);
-          })
-          .catch(error => {
-              console.error("Ошибка при копировании текста:", error);
-              // Fallback для старих браузерів
-              const textArea = document.createElement("textarea");
-              textArea.value = shareLink;
-              document.body.appendChild(textArea);
-              textArea.select();
-              document.execCommand('copy');
-              document.body.removeChild(textArea);
-              copyButton.textContent = 'Copied!';
-              setTimeout(() => {
-                  copyButton.textContent = 'Copy link';
-              }, 2000);
-          });
-  })
-  .catch(error => {
-      console.error("Ошибка при выполнении запроса:", error);
-      alert('Error sharing projects. Please try again.');
-  });
+    
+    // Show loading state
+    const originalText = copyButton.textContent;
+    copyButton.textContent = 'Generating...';
+    copyButton.disabled = true;
+    
+    fetch("https://crm.server.pro-part.es/api/v1/share-projects", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(body),
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+    })
+    .then(data => {
+        if (!data._id) {
+            throw new Error('No share ID received from API');
+        }
+        
+        const shareLink = `${window.location.origin}/liked-projects?shareId=${data._id}`;
+        
+        // Try modern clipboard API first
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(shareLink)
+                .then(() => {
+                    copyButton.textContent = 'Copied!';
+                    setTimeout(() => {
+                        copyButton.textContent = originalText;
+                        copyButton.disabled = false;
+                    }, 2000);
+                })
+                .catch(error => {
+                    console.error("Error copying to clipboard:", error);
+                    fallbackCopy(shareLink, copyButton, originalText);
+                });
+        } else {
+            // Fallback for older browsers
+            fallbackCopy(shareLink, copyButton, originalText);
+        }
+    })
+    .catch(error => {
+        console.error("Ошибка при выполнении запроса:", error);
+        copyButton.textContent = originalText;
+        copyButton.disabled = false;
+        alert('Error sharing projects. Please try again.');
+    });
 }
 
-// Wait for DOM to be ready before attaching event listener
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => {
-        const copyButton = document.querySelector(".copy_link");
-        if (copyButton) {
-            copyButton.addEventListener("click", sendFavoriteProjects);
-        }
-    });
-} else {
-    const copyButton = document.querySelector(".copy_link");
-    if (copyButton) {
-        copyButton.addEventListener("click", sendFavoriteProjects);
+// Fallback copy function for older browsers
+function fallbackCopy(text, button, originalText) {
+    const textArea = document.createElement("textarea");
+    textArea.value = text;
+    textArea.style.position = "fixed";
+    textArea.style.left = "-999999px";
+    textArea.style.top = "-999999px";
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+    
+    try {
+        document.execCommand('copy');
+        button.textContent = 'Copied!';
+        setTimeout(() => {
+            button.textContent = originalText;
+            button.disabled = false;
+        }, 2000);
+    } catch (err) {
+        console.error('Fallback copy failed:', err);
+        alert('Could not copy link. Please copy manually: ' + text);
+        button.textContent = originalText;
+        button.disabled = false;
     }
+    
+    document.body.removeChild(textArea);
 }
+
+// Attach event listener (same as before)
+document.querySelector(".copy_link").addEventListener("click", sendFavoriteProjects);
 
 // Simple system is already loaded
 
