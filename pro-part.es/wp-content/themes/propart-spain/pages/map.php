@@ -7555,20 +7555,32 @@ function hidePolygonProjectsList() {
 
                 // mobile
                 function setupModalHandlers() {
+                    console.log("setupModalHandlers викликано");
+                    console.log("document.readyState:", document.readyState);
+                    
                     const filterButton = document.getElementById("filterMobile");
                     const filterButton2 = document.getElementById("filterMobilePhone");
                     const modalAdaptiveFilters = document.getElementById("modalAdaptiveFilters");
                     const closeButton = document.querySelector(".adapriveFilters__header-btnClose");
 
-                    console.log("Setup Modal Handlers:", {
-                        filterButton: !!filterButton,
-                        filterButton2: !!filterButton2,
-                        modalAdaptiveFilters: !!modalAdaptiveFilters,
-                        closeButton: !!closeButton
+                    console.log("Setup Modal Handlers - шукаємо елементи:", {
+                        filterButton: filterButton,
+                        filterButton2: filterButton2,
+                        modalAdaptiveFilters: modalAdaptiveFilters,
+                        closeButton: closeButton
                     });
+                    
+                    console.log("Всі кнопки на сторінці з 'filter':", 
+                        Array.from(document.querySelectorAll('[id*="filter"]')).map(el => ({id: el.id, classes: el.className}))
+                    );
 
                     if (!modalAdaptiveFilters) {
-                        console.error("Modal element not found!");
+                        console.error("Modal element #modalAdaptiveFilters not found!");
+                        return;
+                    }
+                    
+                    if (!filterButton && !filterButton2) {
+                        console.error("Жодна з кнопок фільтра не знайдена!");
                         return;
                     }
 
