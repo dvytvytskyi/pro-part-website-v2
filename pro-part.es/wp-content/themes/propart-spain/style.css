@@ -6478,6 +6478,10 @@ li .custom-checkbox label {
         padding: 0;
         text-align: center;
     }
+    
+    .aiButton {
+        display: none !important;
+    }
 
     .infoBlock {
         margin: 104px 24px;
@@ -6736,9 +6740,12 @@ li .custom-checkbox label {
         display: inline;
     }
 
-    .editButton,
-    .aiButton {
+    .editButton {
      backdrop-filter: blur(5px);
+    }
+    
+    .aiButton {
+        display: none !important;
     }
 
     .infoBlock {
