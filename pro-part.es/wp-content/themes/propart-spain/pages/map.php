@@ -189,6 +189,13 @@
             </div>
             
             <div class="wrapperMapPage__drawWrapper">
+                <button class="wrapperMapPage__drawWrapper-btn wrapperMapPage__homeBtn" id="homeBtn">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                        <path d="M2.5 7.5L10 2.5L17.5 7.5V16.25C17.5 16.5815 17.3683 16.8995 17.1339 17.1339C16.8995 17.3683 16.5815 17.5 16.25 17.5H3.75C3.41848 17.5 3.10054 17.3683 2.86612 17.1339C2.6317 16.8995 2.5 16.5815 2.5 16.25V7.5Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M7.5 17.5V10H12.5V17.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <span>Home</span>
+                </button>
                 <button class="wrapperMapPage__drawWrapper-btn " id="draw" data-tooltip="Draw a polygon to filter projects">
                     <img src="<?php echo get_template_directory_uri(); ?>/icons/map/draw.svg" alt="draw" />
                     <span>Draw on map</span>
@@ -9197,6 +9204,18 @@ function hidePolygonProjectsList() {
         drawCSS.href = 'https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-draw/v1.3.0/mapbox-gl-draw.css';
         drawCSS.rel = 'stylesheet';
         document.head.appendChild(drawCSS);
+    });
+    
+    // Home button functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        const homeBtn = document.getElementById('homeBtn');
+        
+        if (homeBtn) {
+            homeBtn.addEventListener('click', function() {
+                // Redirect to homepage
+                window.location.href = '/';
+            });
+        }
     });
     
     // Mobile Property Type Buttons functionality
