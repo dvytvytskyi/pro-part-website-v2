@@ -1237,15 +1237,23 @@ ul {
         margin-bottom: 0;
     }
     
-    /* Компактний вигляд для мобільної модалки */
+    /* Компактний вигляд для мобільної модалки на карті */
     .wrapperMapPage .adapriveFilters__main {
-        padding-bottom: 80px; /* Місце для кнопок знизу */
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 40px 20px;
+        min-height: auto;
     }
     
-    /* Покращуємо вигляд dropdowns на мобільній */
-    .wrapperMapPage .filterPropertiesWrapper__dropDown_header.mobile {
-        padding: 12px 16px;
-        font-size: 15px;
+    /* Кнопки в мобільній модалці на карті - більші та зручніші */
+    .wrapperMapPage .adapriveFilters__main-buttons.map .adapriveFilters__main-btn,
+    body[class*="map"] .adapriveFilters__main-buttons.map .adapriveFilters__main-btn {
+        padding: 16px 24px;
+        font-size: 16px;
+        min-width: 120px;
+        border-radius: 8px;
     }
 }
 
@@ -1316,41 +1324,37 @@ ul {
         display: none !important;
     }
     
-    /* На карті показуємо dropdowns з фільтрами (тільки основні) */
+    /* На карті показуємо тільки кнопки переключення - без dropdown фільтрів */
     body[class*="map"] .adapriveFilters__main-dropdowns.map,
     .wrapperMapPage .adapriveFilters__main-dropdowns.map {
-        display: block !important;
-    }
-    
-    /* Ховаємо додаткові фільтри на мобільній (Size, Handover) */
-    .wrapperMapPage .mobile-filter-hidden,
-    body[class*="map"] .mobile-filter-hidden {
         display: none !important;
-    }
-    
-    /* Показуємо основні фільтри */
-    .wrapperMapPage .mobile-filter-item:not(.mobile-filter-hidden),
-    body[class*="map"] .mobile-filter-item:not(.mobile-filter-hidden) {
-        display: block !important;
-        margin-bottom: 16px;
     }
     
     /* Залишаємо тільки кнопки переключення на карті */
     body[class*="map"] .adapriveFilters__main-buttons.map,
     .wrapperMapPage .adapriveFilters__main-buttons.map {
         display: flex !important;
+        justify-content: center;
+        gap: 12px;
+        padding: 20px 0;
     }
     
-    /* Прибираємо кнопки Clear і Confirm на карті - замінюємо на простіше */
+    /* Rent type кнопки на мобільній */
+    .wrapperMapPage .adapriveFilters__rent-type-mobile,
+    body[class*="map"] .adapriveFilters__rent-type-mobile {
+        display: block !important;
+    }
+    
+    .wrapperMapPage .adapriveFilters__rent-type-mobile .adapriveFilters__main-buttons.map,
+    body[class*="map"] .adapriveFilters__rent-type-mobile .adapriveFilters__main-buttons.map {
+        justify-content: center;
+        gap: 12px;
+    }
+    
+    /* Прибираємо кнопки Clear і Confirm на карті */
     body[class*="map"] .adapriveFilters__main-buttonsBottom,
     .wrapperMapPage .adapriveFilters__main-buttonsBottom {
-        display: flex !important;
-        position: sticky;
-        bottom: 0;
-        background: white;
-        padding: 16px 20px;
-        border-top: 1px solid #e0e0e0;
-        gap: 12px;
+        display: none !important;
     }
 }
 

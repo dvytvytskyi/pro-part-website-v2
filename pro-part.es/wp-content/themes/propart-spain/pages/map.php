@@ -225,130 +225,29 @@
                     </button>
                 </div>
                 <div class="adapriveFilters__main">
-                    <div>
+                    <div class="adapriveFilters__main-buttons map">
+                        <div class="adapriveFilters__main-btn active" id="offPlanAdaptiveBtn">
+                            Off plan
+                        </div>
+                        <div class="adapriveFilters__main-btn" id="secondaryAdaptiveBtn">
+                            Secondary
+                        </div>
+                        <div class="adapriveFilters__main-btn" id="rentAdaptiveBtn">
+                            Rent
+                        </div>
+                    </div>
+                    
+                    <!-- Rent Type Filter for Mobile -->
+                    <div class="adapriveFilters__rent-type-mobile" id="mapRentTypeMobile" style="display: none; margin-top: 16px;">
                         <div class="adapriveFilters__main-buttons map">
-                            <div class="adapriveFilters__main-btn active" id="offPlanAdaptiveBtn">
-                                Off plan
+                            <div class="adapriveFilters__main-btn active" id="rentLongTermMobileBtn" data-rent-type="long">
+                                Long term
                             </div>
-                            <div class="adapriveFilters__main-btn" id="secondaryAdaptiveBtn">
-                                Secondary
-                            </div>
-                            <div class="adapriveFilters__main-btn" id="rentAdaptiveBtn">
-                                Rent
-                            </div>
-                        </div>
-                        
-                        <!-- Rent Type Filter for Mobile -->
-                        <div class="adapriveFilters__rent-type-mobile" id="mapRentTypeMobile" style="display: none; margin-top: 16px;">
-                            <div class="adapriveFilters__main-buttons map">
-                                <div class="adapriveFilters__main-btn active" id="rentLongTermMobileBtn" data-rent-type="long">
-                                    Long term
-                                </div>
-                                <div class="adapriveFilters__main-btn" id="rentShortTermMobileBtn" data-rent-type="short">
-                                    Short term
-                                </div>
-                            </div>
-                        </div>
-                        <div class="adapriveFilters__main-dropdowns map">
-                            <!-- Основні фільтри для мобільної версії -->
-                            <div class="mobile-filter-item">
-                                <div id="mapLocationFilterMobile" class="filterPropertiesWrapper__dropDown">
-                                    <span class="filterPropertiesWrapper__dropDown_label">Locations</span>
-                                    <div class="filterPropertiesWrapper__dropDown_header mobile">
-                                        Locations
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                            viewBox="0 0 24 24" fill="none">
-                                            <path d="M7 10L12 14L17 10" stroke="#717171" stroke-width="1.5"
-                                                stroke-linecap="round" stroke-linejoin="round" />
-                                        </svg>
-                                    </div>
-                                    <div class="filterPropertiesWrapper__dropDown_body big">
-                                        <div class="filterPropertiesWrapper__dropDown_list">
-                                            <div class="filterPropertiesWrapper__dropDownLocationsWrapper"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="propertiesSelectedFilter__list" id="selectValueMapFilterLocation"></div>
-                            </div>
-                            <div class="mobile-filter-item">
-                                <div id="mapBedroomsFilterMobile" class="filterPropertiesWrapper__dropDown">
-                                    <span class="filterPropertiesWrapper__dropDown_label">Bedrooms</span>
-                                    <div class="filterPropertiesWrapper__dropDown_header mobile">
-                                        Bedrooms
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                            viewBox="0 0 24 24" fill="none">
-                                            <path d="M7 10L12 14L17 10" stroke="#717171" stroke-width="1.5"
-                                                stroke-linecap="round" stroke-linejoin="round" />
-                                        </svg>
-                                    </div>
-                                    <div class="filterPropertiesWrapper__dropDown_body big">
-                                        <div class="filterPropertiesWrapper__dropDown_list"></div>
-                                    </div>
-                                    <div class="propertiesSelectedFilter__list" id="selectValueMapBedrooms"></div>
-                                </div>
-                            </div>
-                            <div class="mobile-filter-item">
-                                <div id="mapPriceFilterMobile" class="filterPropertiesWrapper__dropDown">
-                                    <span class="filterPropertiesWrapper__dropDown_label">Price</span>
-                                    <div class="filterPropertiesWrapper__dropDown_header mobile">
-                                        Price
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                            viewBox="0 0 24 24" fill="none">
-                                            <path d="M7 10L12 14L17 10" stroke="#717171" stroke-width="1.5"
-                                                stroke-linecap="round" stroke-linejoin="round" />
-                                        </svg>
-                                    </div>
-                                    <div class="filterPropertiesWrapper__dropDown_body big">
-                                        <div class="filterPropertiesWrapper__dropDown_list"></div>
-                                    </div>
-                                </div>
-                                <div class="propertiesSelectedFilter__list" id="selectValueMapPrice"></div>
-                            </div>
-                            <!-- Додаткові фільтри - приховані на мобільній -->
-                            <div class="mobile-filter-item mobile-filter-hidden">
-                                <div id="mapSizeFilterMobile" class="filterPropertiesWrapper__dropDown">
-                                    <span class="filterPropertiesWrapper__dropDown_label">Size</span>
-                                    <div class="filterPropertiesWrapper__dropDown_header mobile">
-                                        Size
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                            viewBox="0 0 24 24" fill="none">
-                                            <path d="M7 10L12 14L17 10" stroke="#717171" stroke-width="1.5"
-                                                stroke-linecap="round" stroke-linejoin="round" />
-                                        </svg>
-                                    </div>
-                                    <div class="filterPropertiesWrapper__dropDown_body big">
-                                        <div class="filterPropertiesWrapper__dropDown_list"></div>
-                                    </div>
-                                </div>
-                                <div class="propertiesSelectedFilter__list" id="selectValueMapSize"></div>
-                            </div>
-                            <div class="mobile-filter-item mobile-filter-hidden">
-                                <div id="mapHandoverFilterMobile" class="filterPropertiesWrapper__dropDown">
-                                    <span class="filterPropertiesWrapper__dropDown_label">Handover</span>
-                                    <div class="filterPropertiesWrapper__dropDown_header mobile">
-                                        Handover
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                            viewBox="0 0 24 24" fill="none">
-                                            <path d="M7 10L12 14L17 10" stroke="#717171" stroke-width="1.5"
-                                                stroke-linecap="round" stroke-linejoin="round" />
-                                        </svg>
-                                    </div>
-                                    <div class="filterPropertiesWrapper__dropDown_body big">
-                                        <div class="filterPropertiesWrapper__dropDown_list"></div>
-                                    </div>
-                                </div>
-                                <div class="propertiesSelectedFilter__list" id="selectValueMapHandover"></div>
+                            <div class="adapriveFilters__main-btn" id="rentShortTermMobileBtn" data-rent-type="short">
+                                Short term
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="adapriveFilters__main-buttonsBottom">
-                    <button class="adapriveFilters__main-btnClear" id="clearBtnMapFilterAdaptive">
-                        Clear
-                    </button>
-                    <button class="adapriveFilters__main-btnConfirm" id="btnMapConfrimFilterAdaptive">
-                        Confirm
-                    </button>
                 </div>
             </div>
         </div>
@@ -7660,9 +7559,8 @@ function hidePolygonProjectsList() {
                     const filterButton2 = document.getElementById("filterMobilePhone");
                     const modalAdaptiveFilters = document.getElementById("modalAdaptiveFilters");
                     const closeButton = document.querySelector(".adapriveFilters__header-btnClose");
-                    const closeButton2 = document.querySelector("#btnMapConfrimFilterAdaptive");
 
-                    if (!filterButton || !modalAdaptiveFilters || !closeButton || !closeButton2 || !filterButton2) {
+                    if (!filterButton || !modalAdaptiveFilters || !closeButton || !filterButton2) {
                         console.warn("Some elements are missing, please check the HTML structure.");
                         return;
                     }
@@ -7682,7 +7580,6 @@ function hidePolygonProjectsList() {
                     filterButton.addEventListener("click", openModal);
                     filterButton2.addEventListener("click", openModal);
                     closeButton.addEventListener("click", closeModal);
-                    closeButton2.addEventListener("click", closeModal);
 
                     // Close modal if clicking outside of it
                     modalAdaptiveFilters.addEventListener("click", (e) => {
