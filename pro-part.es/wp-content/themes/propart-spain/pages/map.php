@@ -174,6 +174,20 @@
                 <div class="zoom-btn" id="zoom-in">+</div>
                 <div class="zoom-btn" id="zoom-out">−</div>
             </div>
+            
+            <!-- Mobile Property Type Buttons -->
+            <div class="mobile-property-type-buttons">
+                <button class="mobile-property-type-btn" data-type="offplan">Off Plan</button>
+                <button class="mobile-property-type-btn" data-type="secondary">Secondary</button>
+                <button class="mobile-property-type-btn" data-type="rent">Rent</button>
+            </div>
+            
+            <!-- Rent Type Buttons (shown only when Rent is selected) -->
+            <div class="mobile-rent-type-buttons" id="mobileRentTypeButtons" style="display: none;">
+                <button class="mobile-rent-type-btn" data-rent-type="long">Long Term</button>
+                <button class="mobile-rent-type-btn" data-rent-type="short">Short Term</button>
+            </div>
+            
             <div class="wrapperMapPage__drawWrapper">
                 <button class="wrapperMapPage__drawWrapper-btn " id="draw" data-tooltip="Draw a polygon to filter projects">
                     <img src="<?php echo get_template_directory_uri(); ?>/icons/map/draw.svg" alt="draw" />
@@ -9184,8 +9198,115 @@ function hidePolygonProjectsList() {
         drawCSS.rel = 'stylesheet';
         document.head.appendChild(drawCSS);
     });
-</script>
-
+    
+    // Mobile Property Type Buttons functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        const buttons = document.querySelectorAll('.mobile-property-type-btn');
+        const rentTypeButtons = document.querySelectorAll('.mobile-rent-type-btn');
+        const rentTypeContainer = document.getElementById('mobileRentTypeButtons');
+        
+        // Set initial active state based on URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const currentVisible = urlParams.get('visible') || 'Off plan';
+        const currentRentType = urlParams.get('rentType') || 'long';
+        
+        // Function to show/hide rent type buttons
+        function updateRentTypeVisibility(visible) {
+            if (visible === 'Rent') {
+                rentTypeContainer.style.display = 'flex';
+            } else {
+                rentTypeContainer.style.display = 'none';
+            }
+        }
+        
+        // Set initial visibility
+        updateRentTypeVisibility(currentVisible);
+        
+        buttons.forEach(button => {
+            const buttonType = button.getAttribute('data-type');
+            let visibleValue = '';
+            
+            if (buttonType === 'offplan') {
+                visibleValue = 'Off plan';
+            } else if (buttonType === 'secondary') {
+                visibleValue = 'Secondary';
+            } else if (buttonType === 'rent') {
+                visibleValue = 'Rent';
+            }
+            
+            // Set active state based on current URL
+            if (currentVisible === visibleValue) {
+                button.classList.add('active');
+            } else {
+                button.classList.remove('active');
+            }
+            
+            // Add click handler
+            button.addEventListener('click', function() {
+                // Remove active class from all buttons
+                buttons.forEach(btn => btn.classList.remove('active'));
+                
+                // Add active class to clicked button
+                this.classList.add('active');
+                
+                // Get selected type
+                const selectedType = this.getAttribute('data-type');
+                
+                // Map button type to visible parameter
+                let visibleParam = '';
+                if (selectedType === 'offplan') {
+                    visibleParam = 'Off plan';
+                } else if (selectedType === 'secondary') {
+                    visibleParam = 'Secondary';
+                } else if (selectedType === 'rent') {
+                    visibleParam = 'Rent';
+                }
+                
+                // Update URL and reload
+                const url = new URL(window.location);
+                url.searchParams.set('visible', visibleParam);
+                
+                // If Rent is selected, set default rentType to long
+                if (selectedType === 'rent') {
+                    url.searchParams.set('rentType', 'long');
+                } else {
+                    // Remove rentType parameter for non-rent types
+                    url.searchParams.delete('rentType');
+                }
+                
+                window.location.href = url.toString();
+            });
+        });
+        
+        // Set initial active state for rent type buttons
+        rentTypeButtons.forEach(button => {
+            const rentType = button.getAttribute('data-rent-type');
+            
+            if (currentVisible === 'Rent' && currentRentType === rentType) {
+                button.classList.add('active');
+            } else {
+                button.classList.remove('active');
+            }
+            
+            // Add click handler for rent type buttons
+            button.addEventListener('click', function() {
+                // Remove active class from all rent type buttons
+                rentTypeButtons.forEach(btn => btn.classList.remove('active'));
+                
+                // Add active class to clicked button
+                this.classList.add('active');
+                
+                // Get selected rent type
+                const selectedRentType = this.getAttribute('data-rent-type');
+                
+                // Update URL and reload
+                const url = new URL(window.location);
+                url.searchParams.set('visible', 'Rent');
+                url.searchParams.set('rentType', selectedRentType);
+                window.location.href = url.toString();
+            });
+        });
+    });
 </script>
 
 <style>

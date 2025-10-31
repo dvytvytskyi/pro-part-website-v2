@@ -169,7 +169,7 @@ ul {
 
 @media (max-width: 767px) {
     .wrapperMapPage .filterPropertiesWrapper {
-        padding: 8px 20px;
+        display: none;
     }
 }
 
@@ -186,7 +186,7 @@ ul {
 
 @media (max-width: 767px) {
     .map-wrapper {
-        height: calc(100% - 53px);
+        height: calc(100% - 0px);
     }
 }
 
@@ -334,9 +334,9 @@ ul {
 }
 
 @media (max-width: 767px) {
+    .zoom-control,
     .zoom-btn {
-        width: 44px;
-        height: 44px;
+        display: none !important;
     }
 }
 
@@ -1237,24 +1237,10 @@ ul {
         margin-bottom: 0;
     }
     
-    /* Компактний вигляд для мобільної модалки на карті */
-    .wrapperMapPage .adapriveFilters__main {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        padding: 40px 20px;
-        min-height: auto;
-    }
-    
-    /* Кнопки в мобільній модалці на карті - компактніші */
-    .wrapperMapPage .adapriveFilters__main-buttons.map .adapriveFilters__main-btn,
-    body[class*="map"] .adapriveFilters__main-buttons.map .adapriveFilters__main-btn {
-        padding: 12px 16px;
-        font-size: 14px;
-        min-width: 90px;
-        height: 48px;
-        border-radius: 8px;
+    /* Hide all filters on map page for mobile */
+    .wrapperMapPage .adapriveFilters,
+    body[class*="map"] .adapriveFilters {
+        display: none !important;
     }
 }
 
@@ -1553,10 +1539,7 @@ ul {
 
 @media (max-width: 767px) {
     .filtersMap__tablet-burgerBtn {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        gap: 8px;
+        display: none;
     }
 }
 
@@ -1580,7 +1563,7 @@ ul {
 
 @media (max-width: 767px) {
     #mapFiltetAdaptive {
-        position: relative;
+        display: none;
     }
 }
 
@@ -1975,14 +1958,6 @@ ul {
     padding-bottom: 24px;
 }
 
-#secondarySortFilterMobile {
-    display: none;
-
-    @media (max-width: 767px) {
-        display: flex;
-    }
-}
-
 #secondaryFiltetAdaptive {
     display: none;
 
@@ -2215,12 +2190,6 @@ ul {
     cursor: pointer;
 }
 
-.filterPropertiesWrapper__dropDown_header.mobile {
-    border-radius: 12px;
-    border: 1px solid #ececec;
-    color: #b6b4b3;
-}
-
 .filterPropertiesWrapper__dropDown_body {
     display: none;
     position: absolute;
@@ -2266,14 +2235,6 @@ ul {
 }
 .filterPropertiesWrapper__dropDown_subDropdown {
     width: 110px;
-}
-
-@media (max-width: 767px) {
-    .filterPropertiesWrapper__dropDown_body {
-        top: 50px;
-		width: 100%;
-		box-sizing: border-box;
-    }
 }
 
 @media (max-width: 1409px) {
@@ -2506,16 +2467,6 @@ ul {
     justify-content: center;
 }
 
-#offPlanSortFilterMobile {
-    display: none;
-}
-
-@media (max-width: 767px) {
-    #offPlanSortFilterMobile {
-        display: flex;
-    }
-}
-
 .filtersMap__tablet {
     display: none;
 }
@@ -2525,6 +2476,12 @@ ul {
         display: flex;
         align-items: center;
         gap: 8px;
+    }
+}
+
+@media (max-width: 767px) {
+    .filtersMap__tablet {
+        display: none;
     }
 }
 
@@ -2549,14 +2506,10 @@ ul {
 }
 
 @media (max-width: 767px) {
-    .filtersMap__tablet-btn {
-        height: 44px;
-        border-radius: 50%;
-        padding: 0 11px;
-    }
-
-    .filtersMap__tablet-btn span {
-        display: none;
+    .filtersMap__tablet-btn,
+    #filterMobile,
+    #filterMobilePhone {
+        display: none !important;
     }
 }
 
@@ -10902,10 +10855,6 @@ p {
     }
 }
 
-	#filterMobilePhone {
-		display: none;
-	}
-
 @media screen and (max-width: 767px) {
 	#draw {
 		order: 2 !important;
@@ -10914,32 +10863,9 @@ p {
 	#trash {
 		order: 3 !important;
 	}
-
-	#filterMobilePhone {
-		order: 4 !important;
-		
-		border: none;
-		color: #ececec;
-		display: flex;
-		align-items: center;
-		background: white;
-		border: 0.6px solid #ececec;
-/* 		background: #71717166; */
-/* 		-webkit-backdrop-filter: blur(20px); */
-/* 		backdrop-filter: blur(20px); */
-		white-space: nowrap;
-	}
-
-	#filterMobile {
-		display: none;
-	}
 }
 
 #draw.hidden {
-	display: none;
-}
-
-#filterMobilePhone.hidden {
 	display: none;
 }
 
@@ -11435,9 +11361,8 @@ p {
 }
 
 @media(max-width: 768px) {
-    .filter-ml__content {
-        padding: 16px;
-        border-radius: 20px;
+    .filter-ml {
+        display: none;
     }
 }
 
@@ -12190,5 +12115,87 @@ p {
     .pricelist-form-input,
     .pricelist-form-submit {
         font-size: 14px;
+    }
+}
+
+/* Mobile Property Type Buttons */
+.mobile-property-type-buttons {
+    display: none;
+}
+
+@media (max-width: 767px) {
+    .mobile-property-type-buttons {
+        display: flex;
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        right: 20px;
+        z-index: 1000;
+        gap: 8px;
+        padding: 0;
+    }
+    
+    .mobile-property-type-btn {
+        flex: 1;
+        height: 44px;
+        border-radius: 12px;
+        border: 1px solid #d8d8d8;
+        background: white;
+        color: #717171;
+        font-family: Onest;
+        font-size: 14px;
+        font-weight: 500;
+        line-height: normal;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+    
+    .mobile-property-type-btn:hover {
+        background: #f9fafb;
+    }
+    
+    .mobile-property-type-btn.active {
+        background: #313131;
+        color: white;
+        border-color: #313131;
+    }
+    
+    /* Rent Type Buttons */
+    .mobile-rent-type-buttons {
+        position: fixed;
+        top: 76px;
+        left: 20px;
+        right: 20px;
+        z-index: 1000;
+        display: flex;
+        gap: 8px;
+        padding: 0;
+    }
+    
+    .mobile-rent-type-btn {
+        flex: 1;
+        height: 40px;
+        border-radius: 10px;
+        border: 1px solid #d8d8d8;
+        background: white;
+        color: #717171;
+        font-family: Onest;
+        font-size: 13px;
+        font-weight: 400;
+        line-height: normal;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+    }
+    
+    .mobile-rent-type-btn:hover {
+        background: #f9fafb;
+    }
+    
+    .mobile-rent-type-btn.active {
+        background: #313131;
+        color: white;
+        border-color: #313131;
     }
 }
