@@ -3314,7 +3314,23 @@ function createProjectCard(project) {
     card.innerHTML = `
     <div>
       <div class="rectangle-parent">
-        <img class="frame-child" src="${projectImage}" alt="${projectName}" />
+        <div class="image-slider-container">
+            <div class="image-wrapper">
+                <img class="frame-child current-image" src="${projectImage}" alt="${projectName}" style="transition: opacity 0.3s ease;" />
+            </div>
+            ${images && images.length > 1 ? `
+            <button class="card-buttons-swiper-btn-left">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="none">
+                    <path d="M10.5 5L7.18352 8.5286C6.93883 8.78894 6.93883 9.21106 7.18352 9.4714L10.5 13" stroke="#717171" stroke-width="1.2" stroke-linecap="round"/>
+                </svg>
+            </button>
+            <button class="card-buttons-swiper-btn-right" style="rotate: 180deg">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="none">
+                    <path d="M7.5 5L10.8165 8.5286C11.0612 8.78894 11.0612 9.21106 10.8165 9.4714L7.5 13" stroke="#717171" stroke-width="1.2" stroke-linecap="round"/>
+                </svg>
+            </button>
+            ` : ''}
+        </div>
         <div class="frame-group">
           <div class="off-plan-wrapper"><div class="off-plan">${projectUnits.type || 'Property'}</div></div>
           <div class="off-plan-wrapper"><div class="off-plan">${projectUnits.bedrooms || '0'} beds</div></div>
@@ -3347,6 +3363,50 @@ function createProjectCard(project) {
       </div>
     </div>`;
 	
+    // Add image slider functionality if multiple images exist
+    if (images && images.length > 1) {
+        const container = card.querySelector('.image-slider-container');
+        const leftButton = container.querySelector('.card-buttons-swiper-btn-left');
+        const rightButton = container.querySelector('.card-buttons-swiper-btn-right');
+        const image = container.querySelector('.current-image');
+        container.dataset.currentIndex = '0';
+
+        function updateImage(direction) {
+            const currentIndex = parseInt(container.dataset.currentIndex, 10);
+            const totalImages = images.length;
+
+            if (!totalImages) {
+                return;
+            }
+
+            let newIndex = direction === 'next'
+                ? (currentIndex + 1) % totalImages
+                : (currentIndex - 1 + totalImages) % totalImages;
+
+            image.style.opacity = '0';
+            setTimeout(() => {
+                if (images[newIndex]?.original) {
+                    image.src = images[newIndex].original;
+                    image.style.opacity = '1';
+                }
+            }, 100);
+
+            container.dataset.currentIndex = newIndex;
+        }
+
+        leftButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            updateImage('prev');
+        });
+
+        rightButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            updateImage('next');
+        });
+    }
+
 	card.querySelector('.heart-wrapper').addEventListener('click', function(event) {
         event.preventDefault();
         
@@ -3411,7 +3471,23 @@ function createSecondaryProjectCard(project) {
 	
     card.innerHTML = `<div>
       <div class="rectangle-parent">
-        <img class="frame-child" src="${projectImage}" alt="${projectName}" />
+        <div class="image-slider-container">
+            <div class="image-wrapper">
+                <img class="frame-child current-image" src="${projectImage}" alt="${projectName}" style="transition: opacity 0.3s ease;" />
+            </div>
+            ${project.images && project.images.length > 1 ? `
+            <button class="card-buttons-swiper-btn-left">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="none">
+                    <path d="M10.5 5L7.18352 8.5286C6.93883 8.78894 6.93883 9.21106 7.18352 9.4714L10.5 13" stroke="#717171" stroke-width="1.2" stroke-linecap="round"/>
+                </svg>
+            </button>
+            <button class="card-buttons-swiper-btn-right" style="rotate: 180deg">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="none">
+                    <path d="M7.5 5L10.8165 8.5286C11.0612 8.78894 11.0612 9.21106 10.8165 9.4714L7.5 13" stroke="#717171" stroke-width="1.2" stroke-linecap="round"/>
+                </svg>
+            </button>
+            ` : ''}
+        </div>
         <div class="instance-parent">
           <div class="heart-wrapper">
             <svg class="heart-icon" width="24" height="24" viewBox="0 0 24 24" fill="${isFavorite ? '#313131' : 'none'}" xmlns="http://www.w3.org/2000/svg">
@@ -3439,6 +3515,51 @@ function createSecondaryProjectCard(project) {
       </div>
     </div>`;
 	
+    // Add image slider functionality if multiple images exist
+    if (project.images && project.images.length > 1) {
+        const container = card.querySelector('.image-slider-container');
+        const leftButton = container.querySelector('.card-buttons-swiper-btn-left');
+        const rightButton = container.querySelector('.card-buttons-swiper-btn-right');
+        const image = container.querySelector('.current-image');
+        container.dataset.currentIndex = '0';
+
+        function updateImage(direction) {
+            const currentIndex = parseInt(container.dataset.currentIndex, 10);
+            const totalImages = project.images.length;
+
+            if (!totalImages) {
+                return;
+            }
+
+            let newIndex = direction === 'next'
+                ? (currentIndex + 1) % totalImages
+                : (currentIndex - 1 + totalImages) % totalImages;
+
+            image.style.opacity = '0';
+            setTimeout(() => {
+                if (project.images[newIndex]) {
+                    const imgSrc = project.images[newIndex].original || project.images[newIndex].url || project.images[newIndex];
+                    image.src = imgSrc;
+                    image.style.opacity = '1';
+                }
+            }, 100);
+
+            container.dataset.currentIndex = newIndex;
+        }
+
+        leftButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            updateImage('prev');
+        });
+
+        rightButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            updateImage('next');
+        });
+    }
+
 	card.querySelector('.heart-wrapper').addEventListener('click', function(event) {
         event.preventDefault();
         
@@ -3676,24 +3797,49 @@ function sendFavoriteProjects() {
   })
   .then(response => response.json())
   .then(data => {
-      const shareLink = `https://test.pro-part.es/liked-projects?shareId=${data._id}`;
+      const shareLink = `${window.location.origin}/liked-projects?shareId=${data._id}`;
       navigator.clipboard.writeText(shareLink)
           .then(() => {
-              copyButton.textContent = 'Copied';
+              copyButton.textContent = 'Copied!';
               setTimeout(() => {
-                  copyButton.textContent = 'Copy Link';
+                  copyButton.textContent = 'Copy link';
               }, 2000);
           })
           .catch(error => {
               console.error("Ошибка при копировании текста:", error);
+              // Fallback для старих браузерів
+              const textArea = document.createElement("textarea");
+              textArea.value = shareLink;
+              document.body.appendChild(textArea);
+              textArea.select();
+              document.execCommand('copy');
+              document.body.removeChild(textArea);
+              copyButton.textContent = 'Copied!';
+              setTimeout(() => {
+                  copyButton.textContent = 'Copy link';
+              }, 2000);
           });
   })
   .catch(error => {
       console.error("Ошибка при выполнении запроса:", error);
+      alert('Error sharing projects. Please try again.');
   });
 }
 
-document.querySelector(".copy_link").addEventListener("click", sendFavoriteProjects);
+// Wait for DOM to be ready before attaching event listener
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+        const copyButton = document.querySelector(".copy_link");
+        if (copyButton) {
+            copyButton.addEventListener("click", sendFavoriteProjects);
+        }
+    });
+} else {
+    const copyButton = document.querySelector(".copy_link");
+    if (copyButton) {
+        copyButton.addEventListener("click", sendFavoriteProjects);
+    }
+}
 
 // Simple system is already loaded
 
