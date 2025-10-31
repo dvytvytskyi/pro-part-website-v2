@@ -504,6 +504,11 @@ ul {
     .wrapperMapPage__homeBtn {
         display: flex !important;
     }
+    
+    /* Hide AI chat button on mobile map page */
+    .wrapperMapPage .simple-ai-btn {
+        display: none !important;
+    }
 }
 
 .wrapperMapPage__drawWrapper-btn.drawing {
