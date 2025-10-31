@@ -8970,6 +8970,11 @@ function hidePolygonProjectsList() {
                     };
 
                     const updateFilterCountDisplay = () => {
+                        // Якщо елемент не існує - просто пропускаємо
+                        if (!filterCountCircle) {
+                            return;
+                        }
+                        
                         if (window.innerWidth > 767) {
                             filterCountCircle.classList.remove("active");
                             filterCountCircle.textContent = "";
