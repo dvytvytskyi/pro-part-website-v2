@@ -3615,6 +3615,94 @@ function createSecondaryProjectCard(project) {
         projectsContainer.appendChild(projectCard);
     });
 }
+// New function - read IDs from URL
+async function renderShareProjectsFromUrl(encodedIds) {
+    if (!encodedIds) {
+        return;
+    }
+    
+    const projectsContainer = document.getElementById('projects');
+    
+    try {
+        // Decode IDs from URL
+        const decodedIds = JSON.parse(atob(encodedIds.replace(/-/g, '+').replace(/_/g, '/')));
+        
+        if (!decodedIds || !Array.isArray(decodedIds) || decodedIds.length === 0) {
+            projectsContainer.innerHTML = '<p>Invalid share link</p>';
+            return;
+        }
+        
+        // Show loading
+        projectsContainer.innerHTML = '<div style="text-align: center; padding: 40px;"><p>Loading shared projects...</p></div>';
+        
+        // Load projects from API using their IDs
+        const properties = [];
+        for (let id of decodedIds) {
+            try {
+                const response = await fetch(`https://xf9m-jkaj-lcsq.p7.xano.io/api:v5maUE6u/properties/${id}`);
+                if (response.ok) {
+                    const property = await response.json();
+                    properties.push(property);
+                }
+            } catch (error) {
+                console.error(`Error fetching property ${id}:`, error);
+            }
+        }
+        
+        if (properties.length === 0) {
+            projectsContainer.innerHTML = '<p>No projects found for this share link</p>';
+            return;
+        }
+        
+        // Render projects
+        projectsContainer.innerHTML = '';
+        properties.forEach(property => {
+            // Determine if it's Off plan or Secondary
+            const isOffPlan = property.visible === 'Off plan' || 
+                             property.generalInfo || 
+                             property.development_name;
+            
+            let card;
+            if (isOffPlan && window.createProjectCardForLiked) {
+                card = window.createProjectCardForLiked(property);
+            } else if (window.createSecondaryProjectCardForLiked) {
+                card = window.createSecondaryProjectCardForLiked(property);
+            } else {
+                // Fallback - create basic card
+                if (isOffPlan) {
+                    const adaptedProject = {
+                        _id: property.id,
+                        generalInfo: {
+                            name: property.development_name || property.name,
+                            province: property.province,
+                            developer: property.developer || 'Unknown Developer',
+                            handover: property.handover
+                        },
+                        images: property.images ? property.images.map(img => ({ original: img.image_url })) : [],
+                        units: [{
+                            type: property.type || 'Property',
+                            bedrooms: property.beds,
+                            size: property.built_area,
+                            price: property.price
+                        }]
+                    };
+                    card = createProjectCard(adaptedProject);
+                } else {
+                    card = createSecondaryProjectCard(property);
+                }
+            }
+            
+            if (card) {
+                projectsContainer.appendChild(card);
+            }
+        });
+    } catch (error) {
+        console.error("Error decoding share link:", error);
+        projectsContainer.innerHTML = '<p>Error loading shared projects. Invalid share link format.</p>';
+    }
+}
+
+// Old function - for backward compatibility (localStorage)
 async function renderShareProjects(shareId) {
     if (!shareId) {
         return;
@@ -3812,8 +3900,14 @@ async function renderShareProjects(shareId) {
 	window.onload = function() {
  	const urlParams = new URLSearchParams(window.location.search);
     const shareId = urlParams.get("shareId");
+    const encodedIds = urlParams.get("ids");
 
-    if (shareId) {
+    // Check for new format (ids in URL)
+    if (encodedIds) {
+		document.querySelector(".copy_link").style.display = 'none';
+		renderShareProjectsFromUrl(encodedIds);
+    } else if (shareId) {
+		// Old format - try localStorage (backward compatibility)
 		document.querySelector(".copy_link").style.display = 'none';
 		renderShareProjects(shareId);
     } else {
@@ -3855,27 +3949,11 @@ function sendFavoriteProjects() {
         return;
     }
 
-    // Generate unique share ID (timestamp + random)
-    const shareId = Date.now().toString(36) + Math.random().toString(36).substr(2, 9);
+    // Encode project IDs in URL (base64 encoded JSON array)
+    const encodedIds = btoa(JSON.stringify(allLikedProjects)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
     
-    // Store shared projects in localStorage with this shareId
-    const sharedData = {
-        shareId: shareId,
-        projectIds: allLikedProjects,
-        createdAt: Date.now()
-    };
-    
-    // Store in localStorage (keep last 50 shared links)
-    let sharedLinks = JSON.parse(localStorage.getItem("sharedLinks") || "[]");
-    sharedLinks.push(sharedData);
-    // Keep only last 50
-    if (sharedLinks.length > 50) {
-        sharedLinks = sharedLinks.slice(-50);
-    }
-    localStorage.setItem("sharedLinks", JSON.stringify(sharedLinks));
-    
-    // Create share link
-    const shareLink = `${window.location.origin}/liked-projects?shareId=${shareId}`;
+    // Create share link with encoded IDs in URL
+    const shareLink = `${window.location.origin}/liked-projects?ids=${encodedIds}`;
     
     // Show loading state
     copyButton.textContent = 'Copying...';
