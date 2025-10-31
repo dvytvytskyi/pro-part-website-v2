@@ -6082,12 +6082,12 @@ function hidePolygonProjectsList() {
                     if (typeof mapDropDownLocation === 'function') mapDropDownLocation();
                     if (typeof secondaryDropDownPropertyType === 'function') secondaryDropDownPropertyType();
                     
-                    // Ініціалізація мобільних фільтрів
-                    if (typeof mapDropDownBeddroomsMobile === 'function') mapDropDownBeddroomsMobile();
-                    if (typeof mapDropDownPriceMobile === 'function') mapDropDownPriceMobile();
-                    if (typeof mapDropDownSizeMobile === 'function') mapDropDownSizeMobile();
-                    if (typeof mapDropDownHandoverMobile === 'function') mapDropDownHandoverMobile();
-                    if (typeof mapDropDownLocationMobile === 'function') mapDropDownLocationMobile();
+                    // Мобільні dropdown фільтри ВИДАЛЕНІ з HTML - не викликаємо ці функції
+                    // if (typeof mapDropDownBeddroomsMobile === 'function') mapDropDownBeddroomsMobile();
+                    // if (typeof mapDropDownPriceMobile === 'function') mapDropDownPriceMobile();
+                    // if (typeof mapDropDownSizeMobile === 'function') mapDropDownSizeMobile();
+                    // if (typeof mapDropDownHandoverMobile === 'function') mapDropDownHandoverMobile();
+                    // if (typeof mapDropDownLocationMobile === 'function') mapDropDownLocationMobile();
 
                     // Ініціалізація кнопок та інших обробників
                     if (typeof setupFilterButtons === 'function') setupFilterButtons();
@@ -7629,7 +7629,8 @@ function hidePolygonProjectsList() {
                         }
                     });
                 }
-                setupModalHandlers();
+                // setupModalHandlers викликається в initializeAllFilters, не викликаємо тут повторно
+                // setupModalHandlers();
 
                 function mapDropDownBeddroomsMobile() {
                     const dropdownContainer = document.getElementById(
