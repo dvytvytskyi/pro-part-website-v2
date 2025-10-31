@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://pro-part.es/sitemap.xml

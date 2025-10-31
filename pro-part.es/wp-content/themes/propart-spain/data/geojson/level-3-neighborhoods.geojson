@@ -1,0 +1,174 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Puerto Banús",
+        "type": "neighborhood",
+        "parent": "Marbella",
+        "level": 3
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [-4.95, 36.485],
+            [-4.92, 36.485],
+            [-4.92, 36.505],
+            [-4.95, 36.505],
+            [-4.95, 36.485]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Nueva Andalucía",
+        "type": "neighborhood",
+        "parent": "Marbella",
+        "level": 3
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [-4.98, 36.5],
+            [-4.94, 36.5],
+            [-4.94, 36.53],
+            [-4.98, 36.53],
+            [-4.98, 36.5]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "San Pedro de Alcántara",
+        "type": "neighborhood",
+        "parent": "Marbella",
+        "level": 3
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [-5.0, 36.48],
+            [-4.97, 36.48],
+            [-4.97, 36.51],
+            [-5.0, 36.51],
+            [-5.0, 36.48]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Cortijo Blanco",
+        "type": "neighborhood",
+        "parent": "Marbella",
+        "level": 3
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [-4.995, 36.495],
+            [-4.98, 36.495],
+            [-4.98, 36.51],
+            [-4.995, 36.51],
+            [-4.995, 36.495]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Sierra Blanca",
+        "type": "neighborhood",
+        "parent": "Marbella",
+        "level": 3
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [-4.91, 36.505],
+            [-4.88, 36.505],
+            [-4.88, 36.525],
+            [-4.91, 36.525],
+            [-4.91, 36.505]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Golden Mile",
+        "type": "neighborhood",
+        "parent": "Marbella",
+        "level": 3
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [-4.93, 36.49],
+            [-4.9, 36.49],
+            [-4.9, 36.51],
+            [-4.93, 36.51],
+            [-4.93, 36.49]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Los Boliches",
+        "type": "neighborhood",
+        "parent": "Fuengirola",
+        "level": 3
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [-4.62, 36.53],
+            [-4.6, 36.53],
+            [-4.6, 36.55],
+            [-4.62, 36.55],
+            [-4.62, 36.53]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "La Cala de Mijas",
+        "type": "neighborhood",
+        "parent": "Mijas",
+        "level": 3
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [-4.68, 36.57],
+            [-4.65, 36.57],
+            [-4.65, 36.6],
+            [-4.68, 36.6],
+            [-4.68, 36.57]
+          ]
+        ]
+      }
+    }
+  ]
+}
+

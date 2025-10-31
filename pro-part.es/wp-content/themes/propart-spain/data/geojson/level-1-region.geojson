@@ -1,0 +1,27 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Costa del Sol",
+        "name_ua": "Коста дель Соль",
+        "type": "region",
+        "level": 1
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [-5.3, 36.3],
+            [-4.3, 36.3],
+            [-4.3, 36.8],
+            [-5.3, 36.8],
+            [-5.3, 36.3]
+          ]
+        ]
+      }
+    }
+  ]
+}
+

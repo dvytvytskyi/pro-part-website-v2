@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🤖 AI Property Search - TEST</title>
+    
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    
+    <!-- AI Search CSS -->
+    <link rel="stylesheet" href="wp-content/themes/propart-spain/css/ai-search.css">
+    
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            margin: 0;
+            padding: 40px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+        
+        h1 {
+            color: #667eea;
+            margin-top: 0;
+        }
+        
+        .status {
+            padding: 16px;
+            background: #f0fdf4;
+            border: 2px solid #86efac;
+            border-radius: 12px;
+            margin: 20px 0;
+        }
+        
+        .status.error {
+            background: #fef2f2;
+            border-color: #fca5a5;
+        }
+        
+        .test-queries {
+            margin: 20px 0;
+        }
+        
+        .test-query {
+            display: inline-block;
+            padding: 8px 16px;
+            margin: 4px;
+            background: #ede9fe;
+            border: 1px solid #667eea;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s ease;
+        }
+        
+        .test-query:hover {
+            background: #667eea;
+            color: white;
+        }
+        
+        code {
+            background: #f3f4f6;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🤖 AI Property Search - Локальне Тестування</h1>
+        
+        <div class="status">
+            <strong>✅ Статус:</strong> Локальний сервер запущено на <code>http://localhost:8000</code><br>
+            <strong>🔗 REST API:</strong> <code>/wp-json/propart/v1/ai-search</code><br>
+            <strong>🎯 Mock Data:</strong> 12 тестових об'єктів (Marbella, Estepona, Benahavis, Mijas)
+        </div>
+        
+        <h2>📝 Швидкі тестові запити:</h2>
+        <p>Натисніть на запит, щоб його вставити в чат:</p>
+        
+        <div class="test-queries">
+            <span class="test-query">Квартира в Марбельї 2 спальні до 300 тисяч</span>
+            <span class="test-query">Villa with pool in Estepona</span>
+            <span class="test-query">Оренда 3 спальні</span>
+            <span class="test-query">Пентхаус в центрі</span>
+            <span class="test-query">Apartment under 200k</span>
+            <span class="test-query">Вілла з садом та басейном</span>
+            <span class="test-query">2 bedroom near beach</span>
+            <span class="test-query">Бюджет 500 тисяч</span>
+        </div>
+        
+        <h2>🔍 Як тестувати:</h2>
+        <ol>
+            <li>Натисніть на кнопку <strong>🤖 AI Пошук</strong> (справа внизу)</li>
+            <li>Введіть запит або натисніть на готовий вище</li>
+            <li>Дочекайтесь результатів (~2-3 секунди)</li>
+            <li>Перевірте чи правильно AI зрозумів запит</li>
+            <li>Перевірте чи відображаються картки з об'єктами</li>
+        </ol>
+        
+        <h2>🎨 Що тестувати:</h2>
+        <ul>
+            <li>✅ UI кнопки (анімація, ховер)</li>
+            <li>✅ Відкриття/закриття модального вікна</li>
+            <li>✅ Відправку повідомлень</li>
+            <li>✅ Відображення "thinking" анімації</li>
+            <li>✅ Відображення результатів</li>
+            <li>✅ Адаптивність (зменшіть вікно браузера)</li>
+            <li>✅ Різні мови (UK/EN/ES)</li>
+        </ul>
+        
+        <h2>🐛 Debug Console:</h2>
+        <p>Відкрийте <strong>Developer Tools (F12)</strong> → <strong>Console</strong> для перегляду помилок</p>
+        <p>Також перевірте <strong>Network</strong> tab для перегляду API запитів</p>
+        
+        <div id="debug-info" style="margin-top: 20px; padding: 16px; background: #f9fafb; border-radius: 8px; font-family: monospace; font-size: 12px;">
+            Завантаження...
+        </div>
+    </div>
+    
+    <!-- AI Search JavaScript -->
+    <script>
+        // Mock WordPress localized script data
+        var propartAI = {
+            apiUrl: 'http://localhost:8000/test-api-router.php',
+            nonce: 'test-nonce-12345'
+        };
+        
+        // Update debug info
+        $(document).ready(function() {
+            $('#debug-info').html(
+                '<strong>🔧 Configuration:</strong><br>' +
+                'API URL: ' + propartAI.apiUrl + '<br>' +
+                'jQuery: ' + (typeof jQuery !== 'undefined' ? '✅ Loaded' : '❌ Not loaded') + '<br>' +
+                'CSS: <span id="css-check">Checking...</span><br>' +
+                'JS: <span id="js-check">Checking...</span>'
+            );
+            
+            // Check if CSS loaded
+            setTimeout(function() {
+                var btn = $('.ai-search-btn');
+                if (btn.length > 0) {
+                    $('#css-check').html('✅ Loaded (кнопка знайдена)');
+                    $('#js-check').html('✅ Loaded (кнопка створена)');
+                } else {
+                    $('#css-check').html('❌ Not loaded');
+                    $('#js-check').html('❌ Not loaded');
+                }
+            }, 500);
+            
+            // Quick test query buttons
+            $('.test-query').on('click', function() {
+                var query = $(this).text();
+                
+                // Open modal if not open
+                if (!$('#ai-chat-modal').is(':visible')) {
+                    $('#ai-search-btn').click();
+                }
+                
+                // Wait a bit and insert text
+                setTimeout(function() {
+                    $('#ai-chat-input').val(query).focus();
+                }, 300);
+            });
+        });
+    </script>
+    
+    <script src="wp-content/themes/propart-spain/js/ai-search.js"></script>
+</body>
+</html>
+

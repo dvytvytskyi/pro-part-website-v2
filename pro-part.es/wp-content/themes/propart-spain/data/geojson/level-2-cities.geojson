@@ -1,0 +1,106 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Marbella",
+        "type": "city",
+        "level": 2
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [-5.0, 36.48],
+            [-4.82, 36.48],
+            [-4.82, 36.58],
+            [-5.0, 36.58],
+            [-5.0, 36.48]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Estepona",
+        "type": "city",
+        "level": 2
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [-5.2, 36.4],
+            [-5.1, 36.4],
+            [-5.1, 36.48],
+            [-5.2, 36.48],
+            [-5.2, 36.4]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Fuengirola",
+        "type": "city",
+        "level": 2
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [-4.65, 36.52],
+            [-4.58, 36.52],
+            [-4.58, 36.58],
+            [-4.65, 36.58],
+            [-4.65, 36.52]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Mijas",
+        "type": "city",
+        "level": 2
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [-4.7, 36.55],
+            [-4.6, 36.55],
+            [-4.6, 36.65],
+            [-4.7, 36.65],
+            [-4.7, 36.55]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Benalmádena",
+        "type": "city",
+        "level": 2
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [-4.58, 36.58],
+            [-4.52, 36.58],
+            [-4.52, 36.63],
+            [-4.58, 36.63],
+            [-4.58, 36.58]
+          ]
+        ]
+      }
+    }
+  ]
+}
+
