@@ -251,14 +251,6 @@
                         </div>
                     </div>
                 </div>
-                <div class="adapriveFilters__main-buttonsBottom">
-                    <button class="adapriveFilters__main-btnClear" id="clearBtnMapFilterAdaptive">
-                        Clear
-                    </button>
-                    <button class="adapriveFilters__main-btnConfirm" id="btnMapConfrimFilterAdaptive">
-                        Confirm
-                    </button>
-                </div>
             </div>
         </div>
     </div>
@@ -7569,7 +7561,6 @@ function hidePolygonProjectsList() {
                     const filterButton2 = document.getElementById("filterMobilePhone");
                     const modalAdaptiveFilters = document.getElementById("modalAdaptiveFilters");
                     const closeButton = document.querySelector(".adapriveFilters__header-btnClose");
-                    const confirmButton = document.getElementById("btnMapConfrimFilterAdaptive");
 
                     if (!modalAdaptiveFilters) {
                         console.error("Modal element not found!");
@@ -7596,10 +7587,6 @@ function hidePolygonProjectsList() {
                     
                     if (closeButton) {
                         closeButton.addEventListener("click", closeModal);
-                    }
-                    
-                    if (confirmButton) {
-                        confirmButton.addEventListener("click", closeModal);
                     }
 
                     // Close modal if clicking outside of it
