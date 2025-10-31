@@ -11372,9 +11372,11 @@ p {
 }
 
 
+/* Debug border - ВИДАЛЕНО
 * {
-    /* border: 1px solid black !important; */
+    border: 1px solid black !important;
 }
+*/
 
 /* FILTER MODAL */
 
