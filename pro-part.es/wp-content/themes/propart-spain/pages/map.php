@@ -7519,23 +7519,23 @@ function hidePolygonProjectsList() {
                             offPlanButton.classList.add("active");
                             secondaryButton.classList.remove("active");
                             rentButton.classList.remove("active");
-                            handoverDropDown.style.display = "flex";
-                            handoverDropDownMobile.style.display = "flex";
-                            rentTypeToggle.style.display = "none";
+                            if (handoverDropDown) handoverDropDown.style.display = "flex";
+                            if (handoverDropDownMobile) handoverDropDownMobile.style.display = "flex";
+                            if (rentTypeToggle) rentTypeToggle.style.display = "none";
                         } else if (selectedValue === "Secondary") {
                             secondaryButton.classList.add("active");
                             offPlanButton.classList.remove("active");
                             rentButton.classList.remove("active");
-                            handoverDropDown.style.display = "none";
-                            handoverDropDownMobile.style.display = "none";
-                            rentTypeToggle.style.display = "none";
+                            if (handoverDropDown) handoverDropDown.style.display = "none";
+                            if (handoverDropDownMobile) handoverDropDownMobile.style.display = "none";
+                            if (rentTypeToggle) rentTypeToggle.style.display = "none";
                         } else if (selectedValue === "Rent") {
                             rentButton.classList.add("active");
                             offPlanButton.classList.remove("active");
                             secondaryButton.classList.remove("active");
-                            handoverDropDown.style.display = "none";
-                            handoverDropDownMobile.style.display = "none";
-                            rentTypeToggle.style.display = "flex";
+                            if (handoverDropDown) handoverDropDown.style.display = "none";
+                            if (handoverDropDownMobile) handoverDropDownMobile.style.display = "none";
+                            if (rentTypeToggle) rentTypeToggle.style.display = "flex";
                         }
                     };
 
