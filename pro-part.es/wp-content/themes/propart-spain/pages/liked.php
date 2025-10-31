@@ -3615,31 +3615,91 @@ function createSecondaryProjectCard(project) {
         projectsContainer.appendChild(projectCard);
     });
 }
-function renderShareProjects(id) {
-    if (!id) {
+async function renderShareProjects(shareId) {
+    if (!shareId) {
         return;
     }
-    const offPlanProjectsContainer = document.getElementById('projects');
-    fetch(`https://crm.server.pro-part.es/api/v1/share-projects/${id}`)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error(`Ошибка HTTP: ${response.status}`);
+    
+    const projectsContainer = document.getElementById('projects');
+    
+    // Read shared projects from localStorage
+    const sharedLinks = JSON.parse(localStorage.getItem("sharedLinks") || "[]");
+    const sharedData = sharedLinks.find(link => link.shareId === shareId);
+    
+    if (!sharedData || !sharedData.projectIds || sharedData.projectIds.length === 0) {
+        projectsContainer.innerHTML = '<p>Shared link not found or expired</p>';
+        return;
+    }
+    
+    // Show loading
+    projectsContainer.innerHTML = '<div style="text-align: center; padding: 40px;"><p>Loading shared projects...</p></div>';
+    
+    try {
+        // Load projects from API using their IDs
+        const properties = [];
+        for (let id of sharedData.projectIds) {
+            try {
+                const response = await fetch(`https://xf9m-jkaj-lcsq.p7.xano.io/api:v5maUE6u/properties/${id}`);
+                if (response.ok) {
+                    const property = await response.json();
+                    properties.push(property);
+                }
+            } catch (error) {
+                console.error(`Error fetching property ${id}:`, error);
             }
-            return response.json();
-        })
-        .then(data => {
-             data.offPlan.forEach(project => {
-            const projectCard = createProjectCard(project);
-            offPlanProjectsContainer.appendChild(projectCard);
+        }
+        
+        if (properties.length === 0) {
+            projectsContainer.innerHTML = '<p>No projects found for this share link</p>';
+            return;
+        }
+        
+        // Render projects
+        projectsContainer.innerHTML = '';
+        properties.forEach(property => {
+            // Determine if it's Off plan or Secondary
+            const isOffPlan = property.visible === 'Off plan' || 
+                             property.generalInfo || 
+                             property.development_name;
+            
+            let card;
+            if (isOffPlan && window.createProjectCardForLiked) {
+                card = window.createProjectCardForLiked(property);
+            } else if (window.createSecondaryProjectCardForLiked) {
+                card = window.createSecondaryProjectCardForLiked(property);
+            } else {
+                // Fallback - create basic card
+                if (isOffPlan) {
+                    const adaptedProject = {
+                        _id: property.id,
+                        generalInfo: {
+                            name: property.development_name || property.name,
+                            province: property.province,
+                            developer: property.developer || 'Unknown Developer',
+                            handover: property.handover
+                        },
+                        images: property.images ? property.images.map(img => ({ original: img.image_url })) : [],
+                        units: [{
+                            type: property.type || 'Property',
+                            bedrooms: property.beds,
+                            size: property.built_area,
+                            price: property.price
+                        }]
+                    };
+                    card = createProjectCard(adaptedProject);
+                } else {
+                    card = createSecondaryProjectCard(property);
+                }
+            }
+            
+            if (card) {
+                projectsContainer.appendChild(card);
+            }
         });
- 			data.secondary.forEach(project => {
-            const projectCard = createSecondaryProjectCard(project);
-            offPlanProjectsContainer.appendChild(projectCard);
-        });
-        })
-        .catch(error => {
-            console.error("Ошибка при запросе данных проекта:", error);
-        });
+    } catch (error) {
+        console.error("Error loading shared projects:", error);
+        projectsContainer.innerHTML = '<p>Error loading shared projects. Please try again.</p>';
+    }
 }
 
 	
@@ -3766,150 +3826,78 @@ function renderShareProjects(id) {
     }
 	};
 	
-async function sendFavoriteProjects() {
+function sendFavoriteProjects() {
     const copyButton = document.querySelector(".copy_link");
     const originalText = copyButton.textContent;
     
+    // Try new like system first (likedPropertyIds)
+    const likedIds = JSON.parse(localStorage.getItem("likedPropertyIds") || "[]");
+    
+    // Fallback to old system if new system is empty
+    const favoriteProjects = JSON.parse(localStorage.getItem("favoriteProjects") || "[]");
+    const favoriteSecondaryProjects = JSON.parse(localStorage.getItem("favoriteSecondaryProjects") || "[]");
+    
+    // Get all liked projects (both systems)
+    let allLikedProjects = [];
+    
+    if (likedIds.length > 0) {
+        // New system - just use IDs
+        allLikedProjects = likedIds;
+    } else {
+        // Old system - extract IDs
+        const offPlanIds = favoriteProjects.map(p => p._id || p.id).filter(Boolean);
+        const secondaryIds = favoriteSecondaryProjects.map(p => p.id || p._id).filter(Boolean);
+        allLikedProjects = [...offPlanIds, ...secondaryIds];
+    }
+
+    if (allLikedProjects.length === 0) {
+        alert('You have no favorite projects to share');
+        return;
+    }
+
+    // Generate unique share ID (timestamp + random)
+    const shareId = Date.now().toString(36) + Math.random().toString(36).substr(2, 9);
+    
+    // Store shared projects in localStorage with this shareId
+    const sharedData = {
+        shareId: shareId,
+        projectIds: allLikedProjects,
+        createdAt: Date.now()
+    };
+    
+    // Store in localStorage (keep last 50 shared links)
+    let sharedLinks = JSON.parse(localStorage.getItem("sharedLinks") || "[]");
+    sharedLinks.push(sharedData);
+    // Keep only last 50
+    if (sharedLinks.length > 50) {
+        sharedLinks = sharedLinks.slice(-50);
+    }
+    localStorage.setItem("sharedLinks", JSON.stringify(sharedLinks));
+    
+    // Create share link
+    const shareLink = `${window.location.origin}/liked-projects?shareId=${shareId}`;
+    
     // Show loading state
-    copyButton.textContent = 'Generating...';
+    copyButton.textContent = 'Copying...';
     copyButton.disabled = true;
     
-    try {
-        // Try new like system first (likedPropertyIds)
-        const likedIds = JSON.parse(localStorage.getItem("likedPropertyIds") || "[]");
-        
-        // Fallback to old system if new system is empty
-        const favoriteProjects = JSON.parse(localStorage.getItem("favoriteProjects") || "[]");
-        const favoriteSecondaryProjects = JSON.parse(localStorage.getItem("favoriteSecondaryProjects") || "[]");
-        
-        let offPlan = [];
-        let secondary = [];
-        
-        // Use new system if available
-        if (likedIds.length > 0) {
-            // Need to fetch project details to determine type
-            const properties = [];
-            for (let id of likedIds) {
-                try {
-                    const response = await fetch(`https://xf9m-jkaj-lcsq.p7.xano.io/api:v5maUE6u/properties/${id}`);
-                    if (response.ok) {
-                        const property = await response.json();
-                        properties.push(property);
-                    }
-                } catch (error) {
-                    console.error(`Error fetching property ${id}:`, error);
-                }
-            }
-            
-            // Split projects into off-plan and secondary
-            properties.forEach(property => {
-                const isOffPlan = property.visible === 'Off plan' || 
-                                 property.generalInfo || 
-                                 property.development_name;
-                if (isOffPlan) {
-                    offPlan.push(property.id);
-                } else {
-                    secondary.push(property.id);
-                }
-            });
-        } else {
-            // Use old system
-            offPlan = favoriteProjects.map(project => project._id);
-            secondary = favoriteSecondaryProjects.map(project => project.id);
-        }
-
-        if (offPlan.length === 0 && secondary.length === 0) {
-            copyButton.textContent = originalText;
-            copyButton.disabled = false;
-            alert('You have no favorite projects to share');
-            return;
-        }
-
-        const body = {
-            shareType: "LIKE"
-        };
-        
-        if (offPlan.length > 0) {
-            body.offPlan = offPlan;
-        }
-        if (secondary.length > 0) {
-            body.secondary = secondary;
-        }
-        
-        let response;
-        try {
-            response = await fetch("https://crm.server.pro-part.es/api/v1/share-projects", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(body),
-            });
-        } catch (fetchError) {
-            console.error("Fetch error:", fetchError);
-            // Check if it's SSL certificate error
-            if (fetchError.message && fetchError.message.includes('CERT')) {
-                throw new Error('SSL certificate error. Please check server certificate or use HTTP.');
-            }
-            throw fetchError;
-        }
-        
-        if (!response.ok) {
-            const errorText = await response.text();
-            console.error("API Error:", response.status, errorText);
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        
-        // Try to get response as text first, then parse JSON (same as other pages)
-        const responseText = await response.text();
-        let data;
-        try {
-            data = JSON.parse(responseText);
-        } catch (parseError) {
-            console.error("JSON parse error:", parseError);
-            console.error("Response text:", responseText);
-            throw new Error('Invalid JSON response from server');
-        }
-        
-        if (!data._id) {
-            throw new Error('No share ID received from API');
-        }
-        
-        const shareLink = `${window.location.origin}/liked-projects?shareId=${data._id}`;
-        
-        // Try modern clipboard API first
-        if (navigator.clipboard && navigator.clipboard.writeText) {
-            try {
-                await navigator.clipboard.writeText(shareLink);
+    // Copy to clipboard
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(shareLink)
+            .then(() => {
                 copyButton.textContent = 'Copied!';
                 setTimeout(() => {
                     copyButton.textContent = originalText;
                     copyButton.disabled = false;
                 }, 2000);
-            } catch (error) {
+            })
+            .catch(error => {
                 console.error("Error copying to clipboard:", error);
                 fallbackCopy(shareLink, copyButton, originalText);
-            }
-        } else {
-            // Fallback for older browsers
-            fallbackCopy(shareLink, copyButton, originalText);
-        }
-    } catch (error) {
-        console.error("Ошибка при выполнении запроса:", error);
-        copyButton.textContent = originalText;
-        copyButton.disabled = false;
-        
-        // More specific error messages
-        let errorMessage = 'Error sharing projects. Please try again.';
-        if (error.message && error.message.includes('SSL') || error.message && error.message.includes('CERT')) {
-            errorMessage = 'SSL certificate error. Please contact administrator or try again later.';
-        } else if (error.message && error.message.includes('Failed to fetch')) {
-            errorMessage = 'Network error. Please check your connection and try again.';
-        } else if (error.message) {
-            errorMessage = `Error: ${error.message}`;
-        }
-        
-        alert(errorMessage);
+            });
+    } else {
+        // Fallback for older browsers
+        fallbackCopy(shareLink, copyButton, originalText);
     }
 }
 
