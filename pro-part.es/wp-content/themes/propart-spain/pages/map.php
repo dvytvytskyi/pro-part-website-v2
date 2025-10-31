@@ -7567,9 +7567,43 @@ function hidePolygonProjectsList() {
                         return;
                     }
 
+                    // Функція для синхронізації стану модалки з URL
+                    const syncModalState = () => {
+                        const offPlanButton = document.getElementById("offPlanAdaptiveBtn");
+                        const secondaryButton = document.getElementById("secondaryAdaptiveBtn");
+                        const rentButton = document.getElementById("rentAdaptiveBtn");
+                        const rentTypeMobile = document.getElementById("mapRentTypeMobile");
+                        
+                        if (!offPlanButton || !secondaryButton || !rentButton || !rentTypeMobile) {
+                            return;
+                        }
+
+                        const urlParams = new URLSearchParams(window.location.search);
+                        const visibleValue = urlParams.get("visible") || "Off plan";
+
+                        // Скидаємо всі active класи
+                        offPlanButton.classList.remove("active");
+                        secondaryButton.classList.remove("active");
+                        rentButton.classList.remove("active");
+
+                        // Встановлюємо правильний стан
+                        if (visibleValue === "Off plan") {
+                            offPlanButton.classList.add("active");
+                            rentTypeMobile.style.display = "none";
+                        } else if (visibleValue === "Secondary") {
+                            secondaryButton.classList.add("active");
+                            rentTypeMobile.style.display = "none";
+                        } else if (visibleValue === "Rent") {
+                            rentButton.classList.add("active");
+                            rentTypeMobile.style.display = "block";
+                        }
+                    };
+
                     const openModal = () => {
                         modalAdaptiveFilters.classList.add("active");
                         document.body.style.overflow = "hidden";
+                        // Синхронізуємо стан модалки при відкритті
+                        syncModalState();
                     };
 
                     const closeModal = () => {
