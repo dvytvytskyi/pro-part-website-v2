@@ -8937,10 +8937,12 @@ function hidePolygonProjectsList() {
                     const filterButton = document.getElementById("filterMobile");
                     const filterCountCircle = document.getElementById("filtersLenghMobileMap");
 
-                    if (!filterButton || !filterCountCircle) {
-                        console.warn("Filter button or count circle not found!");
+                    if (!filterButton) {
+                        console.warn("Filter button not found!");
                         return;
                     }
+                    
+                    // filterCountCircle може бути null - це нормально, він закоментований в HTML
 
                     const countActiveFilters = () => {
                         const hash = window.location.hash.substring(1);
