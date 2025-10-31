@@ -1202,7 +1202,7 @@ ul {
         z-index: 10000;
         position: relative;
         background-color: #fff;
-        padding: 20px;
+        padding: 24px 32px;
     }
 
     /* Specific styling for offPlanAdaptiveFilters modal */
@@ -1247,12 +1247,13 @@ ul {
         min-height: auto;
     }
     
-    /* Кнопки в мобільній модалці на карті - більші та зручніші */
+    /* Кнопки в мобільній модалці на карті - компактніші */
     .wrapperMapPage .adapriveFilters__main-buttons.map .adapriveFilters__main-btn,
     body[class*="map"] .adapriveFilters__main-buttons.map .adapriveFilters__main-btn {
-        padding: 16px 24px;
-        font-size: 16px;
-        min-width: 120px;
+        padding: 12px 16px;
+        font-size: 14px;
+        min-width: 90px;
+        height: 48px;
         border-radius: 8px;
     }
 }
