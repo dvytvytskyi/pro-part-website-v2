@@ -7560,30 +7560,59 @@ function hidePolygonProjectsList() {
                     const modalAdaptiveFilters = document.getElementById("modalAdaptiveFilters");
                     const closeButton = document.querySelector(".adapriveFilters__header-btnClose");
 
-                    if (!filterButton || !modalAdaptiveFilters || !closeButton || !filterButton2) {
-                        console.warn("Some elements are missing, please check the HTML structure.");
+                    console.log("Setup Modal Handlers:", {
+                        filterButton: !!filterButton,
+                        filterButton2: !!filterButton2,
+                        modalAdaptiveFilters: !!modalAdaptiveFilters,
+                        closeButton: !!closeButton
+                    });
+
+                    if (!modalAdaptiveFilters) {
+                        console.error("Modal element not found!");
                         return;
                     }
 
                     const openModal = () => {
-                        if (window.innerWidth < 1409) {
-                            modalAdaptiveFilters.classList.add("active");
-                            document.body.style.overflow = "hidden"; // Prevent background scroll
-                        }
+                        console.log("Opening modal, window width:", window.innerWidth);
+                        modalAdaptiveFilters.classList.add("active");
+                        document.body.style.overflow = "hidden"; // Prevent background scroll
+                        console.log("Modal classes:", modalAdaptiveFilters.className);
                     };
 
                     const closeModal = () => {
+                        console.log("Closing modal");
                         modalAdaptiveFilters.classList.remove("active");
                         document.body.style.overflow = ""; // Restore background scroll
                     };
 
-                    filterButton.addEventListener("click", openModal);
-                    filterButton2.addEventListener("click", openModal);
-                    closeButton.addEventListener("click", closeModal);
+                    if (filterButton) {
+                        filterButton.addEventListener("click", (e) => {
+                            console.log("Filter button clicked");
+                            e.preventDefault();
+                            openModal();
+                        });
+                    }
+                    
+                    if (filterButton2) {
+                        filterButton2.addEventListener("click", (e) => {
+                            console.log("Filter button 2 clicked");
+                            e.preventDefault();
+                            openModal();
+                        });
+                    }
+                    
+                    if (closeButton) {
+                        closeButton.addEventListener("click", (e) => {
+                            console.log("Close button clicked");
+                            e.preventDefault();
+                            closeModal();
+                        });
+                    }
 
                     // Close modal if clicking outside of it
                     modalAdaptiveFilters.addEventListener("click", (e) => {
                         if (e.target === modalAdaptiveFilters) {
+                            console.log("Clicked outside modal content");
                             closeModal();
                         }
                     });
