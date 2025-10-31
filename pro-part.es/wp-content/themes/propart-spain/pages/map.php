@@ -250,7 +250,8 @@
                             </div>
                         </div>
                         <div class="adapriveFilters__main-dropdowns map">
-                            <div>
+                            <!-- Основні фільтри для мобільної версії -->
+                            <div class="mobile-filter-item">
                                 <div id="mapLocationFilterMobile" class="filterPropertiesWrapper__dropDown">
                                     <span class="filterPropertiesWrapper__dropDown_label">Locations</span>
                                     <div class="filterPropertiesWrapper__dropDown_header mobile">
@@ -269,7 +270,7 @@
                                 </div>
                                 <div class="propertiesSelectedFilter__list" id="selectValueMapFilterLocation"></div>
                             </div>
-                            <div>
+                            <div class="mobile-filter-item">
                                 <div id="mapBedroomsFilterMobile" class="filterPropertiesWrapper__dropDown">
                                     <span class="filterPropertiesWrapper__dropDown_label">Bedrooms</span>
                                     <div class="filterPropertiesWrapper__dropDown_header mobile">
@@ -286,7 +287,7 @@
                                     <div class="propertiesSelectedFilter__list" id="selectValueMapBedrooms"></div>
                                 </div>
                             </div>
-                            <div>
+                            <div class="mobile-filter-item">
                                 <div id="mapPriceFilterMobile" class="filterPropertiesWrapper__dropDown">
                                     <span class="filterPropertiesWrapper__dropDown_label">Price</span>
                                     <div class="filterPropertiesWrapper__dropDown_header mobile">
@@ -303,7 +304,8 @@
                                 </div>
                                 <div class="propertiesSelectedFilter__list" id="selectValueMapPrice"></div>
                             </div>
-                            <div>
+                            <!-- Додаткові фільтри - приховані на мобільній -->
+                            <div class="mobile-filter-item mobile-filter-hidden">
                                 <div id="mapSizeFilterMobile" class="filterPropertiesWrapper__dropDown">
                                     <span class="filterPropertiesWrapper__dropDown_label">Size</span>
                                     <div class="filterPropertiesWrapper__dropDown_header mobile">
@@ -320,7 +322,7 @@
                                 </div>
                                 <div class="propertiesSelectedFilter__list" id="selectValueMapSize"></div>
                             </div>
-                            <div>
+                            <div class="mobile-filter-item mobile-filter-hidden">
                                 <div id="mapHandoverFilterMobile" class="filterPropertiesWrapper__dropDown">
                                     <span class="filterPropertiesWrapper__dropDown_label">Handover</span>
                                     <div class="filterPropertiesWrapper__dropDown_header mobile">

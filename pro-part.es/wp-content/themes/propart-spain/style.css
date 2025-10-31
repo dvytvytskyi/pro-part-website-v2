@@ -1219,10 +1219,33 @@ ul {
         position: fixed;
         bottom: 0;
         top: auto;
+        left: 0;
         right: 0;
-        width: calc(100% - 40px);
-        height: 80dvh;
+        width: 100%;
+        max-height: 85vh;
         border-radius: 24px 24px 0 0;
+        margin: 0;
+        box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
+    }
+    
+    /* Стилі для мобільних фільтрів */
+    .mobile-filter-item {
+        margin-bottom: 20px;
+    }
+    
+    .mobile-filter-item:last-child {
+        margin-bottom: 0;
+    }
+    
+    /* Компактний вигляд для мобільної модалки */
+    .wrapperMapPage .adapriveFilters__main {
+        padding-bottom: 80px; /* Місце для кнопок знизу */
+    }
+    
+    /* Покращуємо вигляд dropdowns на мобільній */
+    .wrapperMapPage .filterPropertiesWrapper__dropDown_header.mobile {
+        padding: 12px 16px;
+        font-size: 15px;
     }
 }
 
@@ -1293,10 +1316,23 @@ ul {
         display: none !important;
     }
     
-    /* На карті приховуємо всі фільтри крім кнопок переключення */
-    body[class*="map"] .adapriveFilters__main-dropdowns:not(.rent-type-toggle),
-    .wrapperMapPage .adapriveFilters__main-dropdowns:not(.rent-type-toggle) {
+    /* На карті показуємо dropdowns з фільтрами (тільки основні) */
+    body[class*="map"] .adapriveFilters__main-dropdowns.map,
+    .wrapperMapPage .adapriveFilters__main-dropdowns.map {
+        display: block !important;
+    }
+    
+    /* Ховаємо додаткові фільтри на мобільній (Size, Handover) */
+    .wrapperMapPage .mobile-filter-hidden,
+    body[class*="map"] .mobile-filter-hidden {
         display: none !important;
+    }
+    
+    /* Показуємо основні фільтри */
+    .wrapperMapPage .mobile-filter-item:not(.mobile-filter-hidden),
+    body[class*="map"] .mobile-filter-item:not(.mobile-filter-hidden) {
+        display: block !important;
+        margin-bottom: 16px;
     }
     
     /* Залишаємо тільки кнопки переключення на карті */
@@ -1305,10 +1341,16 @@ ul {
         display: flex !important;
     }
     
-    /* Прибираємо кнопки Clear і Confirm на карті */
+    /* Прибираємо кнопки Clear і Confirm на карті - замінюємо на простіше */
     body[class*="map"] .adapriveFilters__main-buttonsBottom,
     .wrapperMapPage .adapriveFilters__main-buttonsBottom {
-        display: none !important;
+        display: flex !important;
+        position: sticky;
+        bottom: 0;
+        background: white;
+        padding: 16px 20px;
+        border-top: 1px solid #e0e0e0;
+        gap: 12px;
     }
 }
 
