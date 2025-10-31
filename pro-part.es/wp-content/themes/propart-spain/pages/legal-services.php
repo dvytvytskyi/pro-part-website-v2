@@ -2950,110 +2950,12 @@ style.innerHTML = `
 `;
 document.head.appendChild(style);
 
-const createCard = (project)=>{
-	const projectCard = document.createElement("a")
-	console.log(project)
-	projectCard.className = "card"
-	projectCard.innerHTML = `
-      <div class="card__top">
-          <img class="card__image" src="${project.images[0].small}" alt="card price">
-          <a href="#" class="card__link card__favorite">
-            <img src="<?php echo get_template_directory_uri(); ?>/icons/heart.svg" alt="favorite">
-          </a>
-          <a href="#" class="card__link card__call">Call us</a>
-  
-          <div class="card-top__bottom">
-            <div class="card-top__bottom--item">
-              Secondary
-            </div>
-            <div class="card-top__bottom--item">
-              ${project.generalInfo.type}
-            </div>
-            <div class="card-top__bottom--item">
-               ${project.generalInfo.rooms}
-            </div>
-            <div class="card-top__bottom--item">
-              ${project.generalInfo.size} m²
-            </div>
-          </div>
-        </div>
-  
-        <div class="card__bottom">
-          <div class="card__bottom--item">
-            <h2 class="card__bottom--item-title">${project.generalInfo.name}</h2>
-            <p class="card__bottom--item-price">€  ${project.generalInfo.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")}</p>
-          </div>
-          <div class="card__bottom--item">
-            <p class="card__bottom--item-text">${project.generalInfo.province}</p>
-            <p class="card__bottom--item-text">€ ${(project.generalInfo.price/project.generalInfo.size).toFixed().toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".")} m²</p>
-          </div>
-          <hr class="card__bottom--line">
-  
-        </div>
-         <div class="card__bottom--item">
-<p class="card__bottom--item-text"> </p>
-            <p class="card__bottom--item-text">Q2 2025</p>
-          </div>
-   `
-	return projectCard
-	
-}
-		async function  getProjectsToMap(){
-	   const cards_container = document.querySelector(".cards-container")
-	   
-	  try{
-                    const accessKey = "rijVnGe6lBwcsWop";
-                    const secretKey = "0FnSmmqRcM1X0V5y28Mx9rMYyo2mQdVt";
-
-                    const params = new URLSearchParams({
-                        accessKey: accessKey,
-                        secretKey: secretKey,
-                        isPagination: "true",
-                        size: "4",
-                        page: 0,
-                    });
-
-                    const headers = {
-                        "Content-Type": "application/json",
-                    };
-
-                    const body = {};
-        
-		  
-                    const requestBody = Object.keys(body).length ? body : {};
-
-                    const response = await fetch(
-                        `https://crm.server.pro-part.es/api/v1/secondary-projects/integration/projects?${params.toString()}`,
-                        {
-                            method: "POST",
-                            headers,
-                            body: JSON.stringify(requestBody),
-                        }
-                    );
-
-                    if (!response.ok) {
-                        throw new Error("Failed to fetch projects");
-                    }
-
-                    const projectData = await response.json();
-		    cards_container.innerHTML = ""
-		           projectData.projects.map(item=>cards_container.appendChild(createCard(item)))
-
-		  
-	  }catch(e){
-		  
-	  }
-	  
-  } 
+// Removed createCard and getProjectsToMap functions - "Our projects" section no longer needed
 		
 document.addEventListener("DOMContentLoaded", () => {
   const headerContainer = document.getElementById("header");
   const feedbackFormContainer = document.getElementById("feedbackBlock");
   const footerContainer = document.getElementById("footer");
-
-	// getProjectsToMap() - removed "Our projects" section
-	
-	
 	
   headerContainer.appendChild(Header());
   feedbackFormContainer.appendChild(FeedbackForm());
