@@ -3836,13 +3836,23 @@ async function sendFavoriteProjects() {
             body.secondary = secondary;
         }
         
-        const response = await fetch("https://crm.server.pro-part.es/api/v1/share-projects", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(body),
-        });
+        let response;
+        try {
+            response = await fetch("https://crm.server.pro-part.es/api/v1/share-projects", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(body),
+            });
+        } catch (fetchError) {
+            console.error("Fetch error:", fetchError);
+            // Check if it's SSL certificate error
+            if (fetchError.message && fetchError.message.includes('CERT')) {
+                throw new Error('SSL certificate error. Please check server certificate or use HTTP.');
+            }
+            throw fetchError;
+        }
         
         if (!response.ok) {
             const errorText = await response.text();
@@ -3850,7 +3860,16 @@ async function sendFavoriteProjects() {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
         
-        const data = await response.json();
+        // Try to get response as text first, then parse JSON (same as other pages)
+        const responseText = await response.text();
+        let data;
+        try {
+            data = JSON.parse(responseText);
+        } catch (parseError) {
+            console.error("JSON parse error:", parseError);
+            console.error("Response text:", responseText);
+            throw new Error('Invalid JSON response from server');
+        }
         
         if (!data._id) {
             throw new Error('No share ID received from API');
@@ -3879,7 +3898,18 @@ async function sendFavoriteProjects() {
         console.error("Ошибка при выполнении запроса:", error);
         copyButton.textContent = originalText;
         copyButton.disabled = false;
-        alert('Error sharing projects. Please try again. Check console for details.');
+        
+        // More specific error messages
+        let errorMessage = 'Error sharing projects. Please try again.';
+        if (error.message && error.message.includes('SSL') || error.message && error.message.includes('CERT')) {
+            errorMessage = 'SSL certificate error. Please contact administrator or try again later.';
+        } else if (error.message && error.message.includes('Failed to fetch')) {
+            errorMessage = 'Network error. Please check your connection and try again.';
+        } else if (error.message) {
+            errorMessage = `Error: ${error.message}`;
+        }
+        
+        alert(errorMessage);
     }
 }
 
