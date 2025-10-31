@@ -3766,68 +3766,92 @@ function renderShareProjects(id) {
     }
 	};
 	
-function sendFavoriteProjects() {
+async function sendFavoriteProjects() {
     const copyButton = document.querySelector(".copy_link");
-    
-    // Try new like system first (likedPropertyIds)
-    const likedIds = JSON.parse(localStorage.getItem("likedPropertyIds") || "[]");
-    
-    // Fallback to old system if new system is empty
-    const favoriteProjects = JSON.parse(localStorage.getItem("favoriteProjects") || "[]");
-    const favoriteSecondaryProjects = JSON.parse(localStorage.getItem("favoriteSecondaryProjects") || "[]");
-    
-    let offPlan = [];
-    let secondary = [];
-    
-    // Use new system if available
-    if (likedIds.length > 0) {
-        // New system stores just IDs, we need to determine which are off-plan and which are secondary
-        // For now, we'll send all IDs to API and let it handle it
-        // But for compatibility with API, we need to split them
-        // This is a temporary solution - we'll send all as offPlan for now
-        offPlan = likedIds;
-    } else {
-        // Use old system
-        offPlan = favoriteProjects.map(project => project._id);
-        secondary = favoriteSecondaryProjects.map(project => project.id);
-    }
-
-    if (offPlan.length === 0 && secondary.length === 0) {
-        console.log("No favorite projects to share");
-        alert('You have no favorite projects to share');
-        return;
-    }
-
-    const body = {
-        shareType: "LIKE"
-    };
-    
-    if (offPlan.length > 0) {
-        body.offPlan = offPlan;
-    }
-    if (secondary.length > 0) {
-        body.secondary = secondary;
-    }
+    const originalText = copyButton.textContent;
     
     // Show loading state
-    const originalText = copyButton.textContent;
     copyButton.textContent = 'Generating...';
     copyButton.disabled = true;
     
-    fetch("https://crm.server.pro-part.es/api/v1/share-projects", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify(body),
-    })
-    .then(response => {
+    try {
+        // Try new like system first (likedPropertyIds)
+        const likedIds = JSON.parse(localStorage.getItem("likedPropertyIds") || "[]");
+        
+        // Fallback to old system if new system is empty
+        const favoriteProjects = JSON.parse(localStorage.getItem("favoriteProjects") || "[]");
+        const favoriteSecondaryProjects = JSON.parse(localStorage.getItem("favoriteSecondaryProjects") || "[]");
+        
+        let offPlan = [];
+        let secondary = [];
+        
+        // Use new system if available
+        if (likedIds.length > 0) {
+            // Need to fetch project details to determine type
+            const properties = [];
+            for (let id of likedIds) {
+                try {
+                    const response = await fetch(`https://xf9m-jkaj-lcsq.p7.xano.io/api:v5maUE6u/properties/${id}`);
+                    if (response.ok) {
+                        const property = await response.json();
+                        properties.push(property);
+                    }
+                } catch (error) {
+                    console.error(`Error fetching property ${id}:`, error);
+                }
+            }
+            
+            // Split projects into off-plan and secondary
+            properties.forEach(property => {
+                const isOffPlan = property.visible === 'Off plan' || 
+                                 property.generalInfo || 
+                                 property.development_name;
+                if (isOffPlan) {
+                    offPlan.push(property.id);
+                } else {
+                    secondary.push(property.id);
+                }
+            });
+        } else {
+            // Use old system
+            offPlan = favoriteProjects.map(project => project._id);
+            secondary = favoriteSecondaryProjects.map(project => project.id);
+        }
+
+        if (offPlan.length === 0 && secondary.length === 0) {
+            copyButton.textContent = originalText;
+            copyButton.disabled = false;
+            alert('You have no favorite projects to share');
+            return;
+        }
+
+        const body = {
+            shareType: "LIKE"
+        };
+        
+        if (offPlan.length > 0) {
+            body.offPlan = offPlan;
+        }
+        if (secondary.length > 0) {
+            body.secondary = secondary;
+        }
+        
+        const response = await fetch("https://crm.server.pro-part.es/api/v1/share-projects", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(body),
+        });
+        
         if (!response.ok) {
+            const errorText = await response.text();
+            console.error("API Error:", response.status, errorText);
             throw new Error(`HTTP error! status: ${response.status}`);
         }
-        return response.json();
-    })
-    .then(data => {
+        
+        const data = await response.json();
+        
         if (!data._id) {
             throw new Error('No share ID received from API');
         }
@@ -3836,29 +3860,27 @@ function sendFavoriteProjects() {
         
         // Try modern clipboard API first
         if (navigator.clipboard && navigator.clipboard.writeText) {
-            navigator.clipboard.writeText(shareLink)
-                .then(() => {
-                    copyButton.textContent = 'Copied!';
-                    setTimeout(() => {
-                        copyButton.textContent = originalText;
-                        copyButton.disabled = false;
-                    }, 2000);
-                })
-                .catch(error => {
-                    console.error("Error copying to clipboard:", error);
-                    fallbackCopy(shareLink, copyButton, originalText);
-                });
+            try {
+                await navigator.clipboard.writeText(shareLink);
+                copyButton.textContent = 'Copied!';
+                setTimeout(() => {
+                    copyButton.textContent = originalText;
+                    copyButton.disabled = false;
+                }, 2000);
+            } catch (error) {
+                console.error("Error copying to clipboard:", error);
+                fallbackCopy(shareLink, copyButton, originalText);
+            }
         } else {
             // Fallback for older browsers
             fallbackCopy(shareLink, copyButton, originalText);
         }
-    })
-    .catch(error => {
+    } catch (error) {
         console.error("Ошибка при выполнении запроса:", error);
         copyButton.textContent = originalText;
         copyButton.disabled = false;
-        alert('Error sharing projects. Please try again.');
-    });
+        alert('Error sharing projects. Please try again. Check console for details.');
+    }
 }
 
 // Fallback copy function for older browsers
