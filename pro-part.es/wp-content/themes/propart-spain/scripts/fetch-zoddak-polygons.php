@@ -1,391 +1,318 @@
 <?php
 /**
  * Парсер полігонів районів з Zoddak Properties
- * Логінується та отримує GeoJSON полігони з їхньої карти
+ * Використовує REST API для отримання 4-рівневої ієрархії:
+ * Comarca (регіон) → Municipio (місто) → Distrito (район) → Barrio (квартал)
  */
 
 class ZoddakPolygonFetcher {
-    private $loginUrl = 'https://app.zoddak.com/api/auth/login';
-    private $propertiesUrl = 'https://app.zoddak.com/api/properties';
-    private $cookieFile;
-    private $session;
+    private $baseUrl = 'https://app.zoddak.com/rest/properties';
+    private $phpSessionId;
     private $outputDir;
+    private $stats = [
+        'comarca' => 0,
+        'municipio' => 0,
+        'distrito' => 0,
+        'barrio' => 0,
+    ];
     
-    public function __construct($outputDir) {
+    public function __construct($outputDir, $phpSessionId) {
         $this->outputDir = $outputDir;
+        $this->phpSessionId = $phpSessionId;
         if (!is_dir($outputDir)) {
             mkdir($outputDir, 0755, true);
         }
-        $this->cookieFile = sys_get_temp_dir() . '/zoddak_cookies.txt';
     }
     
     /**
-     * Логін в систему Zoddak
+     * Виконати POST запит до API
      */
-    public function login($email, $password) {
-        echo "🔐 Логінюсь в Zoddak...\n";
-        
-        $ch = curl_init($this->loginUrl);
-        curl_setopt_array($ch, [
-            CURLOPT_POST => true,
-            CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_FOLLOWLOCATION => true,
-            CURLOPT_COOKIEJAR => $this->cookieFile,
-            CURLOPT_COOKIEFILE => $this->cookieFile,
-            CURLOPT_HTTPHEADER => [
-                'Content-Type: application/json',
-                'Accept: application/json',
-            ],
-            CURLOPT_POSTFIELDS => json_encode([
-                'email' => $email,
-                'password' => $password
-            ]),
-            CURLOPT_SSL_VERIFYPEER => false,
-            CURLOPT_USERAGENT => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
-        ]);
-        
-        $response = curl_exec($ch);
-        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        curl_close($ch);
-        
-        if ($httpCode === 200 || $httpCode === 201) {
-            $data = json_decode($response, true);
-            if (isset($data['token']) || isset($data['access_token'])) {
-                echo "✅ Успішний логін\n";
-                return true;
-            }
-        }
-        
-        echo "❌ Помилка логіну. HTTP Code: $httpCode\n";
-        echo "Response: $response\n";
-        return false;
-    }
-    
-    /**
-     * Отримати дані про властивості та райони
-     */
-    public function fetchProperties($filters = []) {
-        echo "📥 Завантаження даних про властивості...\n";
-        
-        $url = $this->propertiesUrl;
-        if (!empty($filters)) {
-            $url .= '?' . http_build_query($filters);
-        }
+    private function apiRequest($endpoint, $postData) {
+        $url = $this->baseUrl . '/' . $endpoint;
+        $jsonData = json_encode($postData);
         
         $ch = curl_init($url);
         curl_setopt_array($ch, [
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_FOLLOWLOCATION => true,
-            CURLOPT_COOKIEFILE => $this->cookieFile,
-            CURLOPT_COOKIEJAR => $this->cookieFile,
+            CURLOPT_POST => true,
+            CURLOPT_POSTFIELDS => $jsonData,
             CURLOPT_HTTPHEADER => [
-                'Accept: application/json',
+                'Accept: */*',
+                'Accept-Language: en-US,en;q=0.9',
                 'Content-Type: application/json',
+                'Cookie: PHPSESSID=' . $this->phpSessionId . '; _fbp=fb.1.1761906626035.672218754704425; _ga=GA1.1.564344171.1761906640; _ga_B7Z7CYZK7C=GS2.1.s1761906639',
+                'Origin: https://app.zoddak.com',
+                'Referer: https://app.zoddak.com/properties',
+                'Cache-Control: no-cache',
             ],
             CURLOPT_SSL_VERIFYPEER => false,
-            CURLOPT_USERAGENT => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+            CURLOPT_USERAGENT => 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36'
         ]);
         
         $response = curl_exec($ch);
         $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         curl_close($ch);
         
-        if ($httpCode === 200) {
+        if ($httpCode === 200 && $response) {
             $data = json_decode($response, true);
-            echo "✅ Отримано дані: " . count($data['properties'] ?? []) . " властивостей\n";
+            
+            if (isset($data['success']) && $data['success']) {
+                // Іноді дані в selector.municipios або selector.distritos
+                if (empty($data['data']) && isset($data['selector'])) {
+                    // Перевірити чи є дані в selector
+                    if (isset($data['selector']['municipios'])) {
+                        return $data['selector']['municipios'];
+                    }
+                    if (isset($data['selector']['distritos'])) {
+                        return $data['selector']['distritos'];
+                    }
+                    if (isset($data['selector']['barrios'])) {
+                        return $data['selector']['barrios'];
+                    }
+                }
+                return $data['data'];
+            }
+        }
+        
+        echo "   ⚠️  HTTP $httpCode для $endpoint (request: " . json_encode($postData) . ")\n";
+        return null;
+    }
+    
+    /**
+     * Отримати всі Comarca (регіони) - Рівень 1
+     */
+    public function fetchComarcas() {
+        echo "📍 Завантаження COMARCA (регіонів)...\n";
+        
+        $data = $this->apiRequest('getGeometryById', [
+            'id' => 'todas',
+            'type' => 'comarcas'
+        ]);
+        
+        if ($data && is_array($data)) {
+            $this->stats['comarca'] = count($data);
+            echo "✅ Завантажено comarca: " . count($data) . "\n";
             return $data;
         }
         
-        echo "❌ Помилка отримання даних. HTTP Code: $httpCode\n";
-        echo "Response: $response\n";
-        return null;
+        return [];
     }
     
     /**
-     * Спробувати знайти API endpoint для карт/полігонів
+     * Отримати Municipio (міста) для comarca - Рівень 2
      */
-    public function fetchMapData() {
-        echo "🗺️ Пошук даних карти...\n";
+    public function fetchMunicipios($comarcaId) {
+        $data = $this->apiRequest('findLocationsById', [
+            'id' => $comarcaId,
+            'type' => 'comarca'
+        ]);
         
-        // Можливі endpoints для карт
-        $endpoints = [
-            'https://app.zoddak.com/api/map/polygons',
-            'https://app.zoddak.com/api/zones',
-            'https://app.zoddak.com/api/areas',
-            'https://app.zoddak.com/api/locations',
-            'https://app.zoddak.com/api/properties/map',
-            'https://app.zoddak.com/api/geojson',
-        ];
-        
-        foreach ($endpoints as $endpoint) {
-            echo "   Спробую: $endpoint\n";
-            $ch = curl_init($endpoint);
-            curl_setopt_array($ch, [
-                CURLOPT_RETURNTRANSFER => true,
-                CURLOPT_FOLLOWLOCATION => true,
-                CURLOPT_COOKIEFILE => $this->cookieFile,
-                CURLOPT_COOKIEJAR => $this->cookieFile,
-                CURLOPT_HTTPHEADER => [
-                    'Accept: application/json',
-                ],
-                CURLOPT_SSL_VERIFYPEER => false,
-                CURLOPT_USERAGENT => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
-            ]);
-            
-            $response = curl_exec($ch);
-            $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-            curl_close($ch);
-            
-            if ($httpCode === 200) {
-                $data = json_decode($response, true);
-                if ($data && (isset($data['features']) || isset($data['polygons']) || isset($data['zones']))) {
-                    echo "   ✅ Знайдено дані на: $endpoint\n";
-                    return $data;
-                }
-            }
+        // DEBUG
+        if ($data === null) {
+            echo "      ⚠️  findLocationsById повернув null для comarca $comarcaId\n";
+        } elseif (empty($data)) {
+            echo "      ℹ️  Немає municipio для цієї comarca\n";
         }
         
-        return null;
+        if ($data && is_array($data)) {
+            return $data;
+        }
+        
+        return [];
     }
     
     /**
-     * Конвертувати дані Zoddak в GeoJSON формат
+     * Отримати Distrito (райони) для municipio - Рівень 3
      */
-    public function convertToGeoJSON($zoddakData) {
-        $features = [];
+    public function fetchDistritos($municipioId) {
+        $data = $this->apiRequest('findLocationsById', [
+            'id' => $municipioId,
+            'type' => 'municipio'
+        ]);
         
-        // Різні формати відповідей
-        if (isset($zoddakData['features'])) {
-            // Вже GeoJSON формат
-            return [
-                'type' => 'FeatureCollection',
-                'features' => $zoddakData['features']
-            ];
+        if ($data && is_array($data)) {
+            return $data;
         }
         
-        if (isset($zoddakData['polygons'])) {
-            foreach ($zoddakData['polygons'] as $polygon) {
-                $features[] = $this->createFeature($polygon);
-            }
-        }
-        
-        if (isset($zoddakData['zones'])) {
-            foreach ($zoddakData['zones'] as $zone) {
-                $features[] = $this->createFeatureFromZone($zone);
-            }
-        }
-        
-        if (isset($zoddakData['properties'])) {
-            // Групування по районах
-            $grouped = [];
-            foreach ($zoddakData['properties'] as $prop) {
-                $area = $prop['area'] ?? $prop['zone'] ?? $prop['location'] ?? 'unknown';
-                if (!isset($grouped[$area])) {
-                    $grouped[$area] = [];
-                }
-                $grouped[$area][] = $prop;
-            }
-            
-            // Створюємо полігони для кожного району
-            foreach ($grouped as $areaName => $properties) {
-                $polygon = $this->createPolygonFromProperties($properties, $areaName);
-                if ($polygon) {
-                    $features[] = $polygon;
-                }
-            }
-        }
-        
-        return [
-            'type' => 'FeatureCollection',
-            'features' => $features
-        ];
+        return [];
     }
     
     /**
-     * Створити Feature з полігону
+     * Отримати Barrio (квартали) для distrito - Рівень 4
      */
-    private function createFeature($polygon) {
+    public function fetchBarrios($distritoId) {
+        $data = $this->apiRequest('findLocationsById', [
+            'id' => $distritoId,
+            'type' => 'distrito'
+        ]);
+        
+        if ($data && is_array($data)) {
+            return $data;
+        }
+        
+        return [];
+    }
+    
+    /**
+     * Конвертувати Zoddak дані в GeoJSON Feature
+     */
+    private function convertToFeature($item, $level, $parentId = null, $parentName = null) {
+        $id = $item['_id']['$oid'] ?? null;
+        $name = $item['Name'] ?? 'Unknown';
+        $type = strtolower($item['type'] ?? 'unknown');
+        $geometry = $item['geometry'] ?? null;
+        $slug = $item['slug'] ?? null;
+        
+        if (!$geometry) {
+            return null;
+        }
+        
         return [
             'type' => 'Feature',
+            'id' => $id,
             'properties' => [
-                'name' => $polygon['name'] ?? $polygon['title'] ?? 'Unknown',
-                'type' => $polygon['type'] ?? 'district',
-                'level' => $polygon['level'] ?? 3,
-                'parent' => $polygon['parent'] ?? null,
+                'name' => $name,
+                'name_es' => $name,
+                'type' => $type,
+                'level' => $level,
+                'parent_id' => $parentId,
+                'parent_name' => $parentName,
+                'slug' => $slug,
+                'zoddak_id' => $id,
             ],
-            'geometry' => [
-                'type' => 'Polygon',
-                'coordinates' => $this->normalizeCoordinates($polygon['coordinates'] ?? $polygon['path'] ?? [])
-            ]
+            'geometry' => $geometry
         ];
     }
     
     /**
-     * Створити Feature з zone
+     * Парсити всю ієрархію
      */
-    private function createFeatureFromZone($zone) {
-        return [
-            'type' => 'Feature',
-            'id' => $zone['id'] ?? null,
-            'properties' => [
-                'name' => $zone['name'] ?? $zone['title'] ?? 'Unknown',
-                'type' => 'district',
-                'level' => 3,
-                'parent' => $zone['city'] ?? $zone['parent'] ?? null,
-            ],
-            'geometry' => [
-                'type' => 'Polygon',
-                'coordinates' => $this->normalizeCoordinates($zone['coordinates'] ?? $zone['polygon'] ?? $zone['bounds'] ?? [])
-            ]
+    public function fetchAllHierarchy() {
+        $allFeatures = [
+            'level1_comarca' => [],
+            'level2_municipio' => [],
+            'level3_distrito' => [],
+            'level4_barrio' => [],
         ];
-    }
-    
-    /**
-     * Нормалізувати координати (конвертувати [lat, lon] в [lon, lat] якщо потрібно)
-     */
-    private function normalizeCoordinates($coords) {
-        if (empty($coords)) return [[]];
         
-        // Якщо це вже правильний формат
-        if (isset($coords[0][0]) && is_array($coords[0][0])) {
-            $normalized = [];
-            foreach ($coords as $ring) {
-                $normalizedRing = [];
-                foreach ($ring as $point) {
-                    // Якщо lat > 90, значить це lon, lat - залишаємо як є
-                    // Якщо lat < 90, можливо це lat, lon - перевертаємо
-                    if (abs($point[0]) > 90 || abs($point[1]) < 90) {
-                        $normalizedRing[] = [$point[1], $point[0]]; // Перевертаємо
-                    } else {
-                        $normalizedRing[] = $point; // Залишаємо як є
+        // Рівень 1: Comarca
+        $comarcas = $this->fetchComarcas();
+        
+        foreach ($comarcas as $comarca) {
+            $comarcaId = $comarca['_id']['$oid'];
+            $comarcaName = $comarca['Name'];
+            
+            // Зберегти comarca
+            $feature = $this->convertToFeature($comarca, 1);
+            if ($feature) {
+                $allFeatures['level1_comarca'][] = $feature;
+            }
+            
+            echo "\n🏛️  COMARCA: {$comarcaName}\n";
+            echo "   ID: {$comarcaId}\n";
+            
+            // Затримка між запитами
+            sleep(1);
+            
+            // Рівень 2: Municipio
+            $municipios = $this->fetchMunicipios($comarcaId);
+            echo "   📊 Municipio: " . count($municipios) . "\n";
+            
+            foreach ($municipios as $municipio) {
+                $municipioId = $municipio['_id']['$oid'];
+                $municipioName = $municipio['Name'];
+                
+                // Зберегти municipio
+                $feature = $this->convertToFeature($municipio, 2, $comarcaId, $comarcaName);
+                if ($feature) {
+                    $allFeatures['level2_municipio'][] = $feature;
+                    $this->stats['municipio']++;
+                }
+                
+                echo "      🏙️  {$municipioName} (ID: {$municipioId})\n";
+                
+                sleep(1);
+                
+                // Рівень 3: Distrito
+                $distritos = $this->fetchDistritos($municipioId);
+                if (count($distritos) > 0) {
+                    echo "         📊 Distrito: " . count($distritos) . "\n";
+                }
+                
+                foreach ($distritos as $distrito) {
+                    $distritoId = $distrito['_id']['$oid'];
+                    $distritoName = $distrito['Name'];
+                    
+                    // Зберегти distrito
+                    $feature = $this->convertToFeature($distrito, 3, $municipioId, $municipioName);
+                    if ($feature) {
+                        $allFeatures['level3_distrito'][] = $feature;
+                        $this->stats['distrito']++;
+                    }
+                    
+                    echo "            🏘️  {$distritoName}\n";
+                    
+                    sleep(1);
+                    
+                    // Рівень 4: Barrio
+                    $barrios = $this->fetchBarrios($distritoId);
+                    if (count($barrios) > 0) {
+                        echo "               📊 Barrio: " . count($barrios) . "\n";
+                    }
+                    
+                    foreach ($barrios as $barrio) {
+                        $barrioId = $barrio['_id']['$oid'];
+                        $barrioName = $barrio['Name'];
+                        
+                        // Зберегти barrio
+                        $feature = $this->convertToFeature($barrio, 4, $distritoId, $distritoName);
+                        if ($feature) {
+                            $allFeatures['level4_barrio'][] = $feature;
+                            $this->stats['barrio']++;
+                        }
+                        
+                        echo "                  🏠 {$barrioName}\n";
+                        
+                        sleep(1);
                     }
                 }
-                // Замикаємо полігон
-                if ($normalizedRing[0] !== $normalizedRing[count($normalizedRing) - 1]) {
-                    $normalizedRing[] = $normalizedRing[0];
-                }
-                $normalized[] = $normalizedRing;
-            }
-            return count($normalized) === 1 ? $normalized[0] : $normalized;
-        }
-        
-        return [[]];
-    }
-    
-    /**
-     * Створити полігон з властивостей (convex hull або bounding box)
-     */
-    private function createPolygonFromProperties($properties, $areaName) {
-        if (empty($properties)) return null;
-        
-        $lats = [];
-        $lons = [];
-        
-        foreach ($properties as $prop) {
-            if (isset($prop['latitude']) && isset($prop['longitude'])) {
-                $lats[] = floatval($prop['latitude']);
-                $lons[] = floatval($prop['longitude']);
-            } elseif (isset($prop['lat']) && isset($prop['lng'])) {
-                $lats[] = floatval($prop['lat']);
-                $lons[] = floatval($prop['lng']);
-            } elseif (isset($prop['coordinates'])) {
-                $coords = $prop['coordinates'];
-                $lats[] = floatval($coords[1] ?? $coords[0]);
-                $lons[] = floatval($coords[0] ?? $coords[1]);
             }
         }
         
-        if (empty($lats)) return null;
-        
-        // Створюємо bounding box з padding
-        $minLat = min($lats);
-        $maxLat = max($lats);
-        $minLon = min($lons);
-        $maxLon = max($lons);
-        
-        // Додаємо padding (5%)
-        $latPadding = ($maxLat - $minLat) * 0.05;
-        $lonPadding = ($maxLon - $minLon) * 0.05;
-        
-        return [
-            'type' => 'Feature',
-            'properties' => [
-                'name' => $areaName,
-                'type' => 'district',
-                'level' => 3,
-            ],
-            'geometry' => [
-                'type' => 'Polygon',
-                'coordinates' => [[
-                    [$minLon - $lonPadding, $minLat - $latPadding],
-                    [$maxLon + $lonPadding, $minLat - $latPadding],
-                    [$maxLon + $lonPadding, $maxLat + $latPadding],
-                    [$minLon - $lonPadding, $maxLat + $latPadding],
-                    [$minLon - $lonPadding, $minLat - $latPadding], // Замикаємо
-                ]]
-            ]
-        ];
+        return $allFeatures;
     }
     
     /**
      * Зберегти GeoJSON у файл
      */
-    public function saveGeoJSON($filename, $geojson) {
+    public function saveGeoJSON($filename, $features) {
+        $geojson = [
+            'type' => 'FeatureCollection',
+            'features' => $features,
+        ];
+        
         $filepath = $this->outputDir . '/' . $filename;
         file_put_contents($filepath, json_encode($geojson, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
-        echo "💾 Збережено: $filepath\n";
+        echo "💾 Збережено: {$filepath} (" . count($features) . " features)\n";
+        return $filepath;
     }
     
     /**
-     * Дослідити структуру API (знайти правильні endpoints)
+     * Вивести статистику
      */
-    public function exploreAPI() {
-        echo "🔍 Досліджую API структуру...\n";
-        
-        // Спробуємо різні endpoints
-        $testEndpoints = [
-            '/api/properties',
-            '/api/map',
-            '/api/locations',
-            '/api/zones',
-            '/api/areas',
-            '/api/districts',
-        ];
-        
-        foreach ($testEndpoints as $endpoint) {
-            $url = 'https://app.zoddak.com' . $endpoint;
-            echo "\n📡 Тестую: $url\n";
-            
-            $ch = curl_init($url);
-            curl_setopt_array($ch, [
-                CURLOPT_RETURNTRANSFER => true,
-                CURLOPT_FOLLOWLOCATION => true,
-                CURLOPT_COOKIEFILE => $this->cookieFile,
-                CURLOPT_COOKIEJAR => $this->cookieFile,
-                CURLOPT_HTTPHEADER => [
-                    'Accept: application/json',
-                ],
-                CURLOPT_SSL_VERIFYPEER => false,
-                CURLOPT_USERAGENT => 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
-            ]);
-            
-            $response = curl_exec($ch);
-            $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-            $contentType = curl_getinfo($ch, CURLINFO_CONTENT_TYPE);
-            curl_close($ch);
-            
-            echo "   HTTP Code: $httpCode\n";
-            echo "   Content-Type: $contentType\n";
-            
-            if ($httpCode === 200 && strpos($contentType, 'json') !== false) {
-                $data = json_decode($response, true);
-                echo "   ✅ Валідний JSON\n";
-                echo "   Структура: " . json_encode(array_keys($data ?? [])) . "\n";
-                if (strlen($response) < 1000) {
-                    echo "   Дані: " . substr($response, 0, 500) . "\n";
-                }
-            }
-        }
+    public function printStats() {
+        echo "\n";
+        echo "═══════════════════════════════════════════════════════════\n";
+        echo "📊 СТАТИСТИКА:\n";
+        echo "═══════════════════════════════════════════════════════════\n";
+        echo "   🌍 Comarca (регіонів):    " . $this->stats['comarca'] . "\n";
+        echo "   🏙️  Municipio (міст):      " . $this->stats['municipio'] . "\n";
+        echo "   🏘️  Distrito (районів):    " . $this->stats['distrito'] . "\n";
+        echo "   🏠 Barrio (кварталів):    " . $this->stats['barrio'] . "\n";
+        echo "   ─────────────────────────────────────\n";
+        echo "   📦 ВСЬОГО:                " . array_sum($this->stats) . "\n";
+        echo "═══════════════════════════════════════════════════════════\n";
     }
 }
 
@@ -394,36 +321,59 @@ class ZoddakPolygonFetcher {
 echo "🚀 Парсер полігонів з Zoddak Properties\n";
 echo "═══════════════════════════════════════════════════════════\n\n";
 
-$email = 'info@property-partners.es';
-$password = 'dybmyG-kefwyv-cygko5';
+// ВАЖЛИВО! Для роботи скрипта потрібен PHPSESSID cookie
+// Отримати його можна так:
+// 1. Відкрийте https://app.zoddak.com в браузері
+// 2. Залогіньтеся у свій акаунт
+// 3. Відкрийте DevTools (F12) → Application → Cookies
+// 4. Скопіюйте значення PHPSESSID
+// 5. Вставте нижче
+
+$phpSessionId = 'YOUR_PHPSESSID_HERE'; // ⚠️ ОНОВІТЬ ЦЕ ЗНАЧЕННЯ!
 $outputDir = __DIR__ . '/../data/geojson';
 
-$fetcher = new ZoddakPolygonFetcher($outputDir);
+echo "🔑 PHPSESSID: {$phpSessionId}\n";
+echo "📁 Вихідна директорія: {$outputDir}\n\n";
 
-// Логін
-if (!$fetcher->login($email, $password)) {
-    echo "❌ Не вдалося увійти. Перевірте credentials.\n";
-    exit(1);
-}
+$fetcher = new ZoddakPolygonFetcher($outputDir, $phpSessionId);
 
-// Спочатку дослідимо API
-echo "\n";
-$fetcher->exploreAPI();
-
-// Спробуємо отримати дані карти
-$mapData = $fetcher->fetchMapData();
-if ($mapData) {
-    $geojson = $fetcher->convertToGeoJSON($mapData);
-    $fetcher->saveGeoJSON('zoddak-all-polygons.json', $geojson);
-}
-
-// Отримуємо властивості
-$properties = $fetcher->fetchProperties(['limit' => 1000]);
-if ($properties) {
-    $geojson = $fetcher->convertToGeoJSON($properties);
-    $fetcher->saveGeoJSON('zoddak-from-properties.json', $geojson);
-}
-
-echo "\n✅ ГОТОВО!\n";
+// Парсити всю ієрархію
+echo "⏳ Починаємо парсинг (це займе ~5-15 хвилин)...\n";
 echo "═══════════════════════════════════════════════════════════\n";
 
+$startTime = microtime(true);
+$allData = $fetcher->fetchAllHierarchy();
+
+echo "\n";
+echo "═══════════════════════════════════════════════════════════\n";
+echo "💾 ЗБЕРЕЖЕННЯ ФАЙЛІВ\n";
+echo "═══════════════════════════════════════════════════════════\n";
+
+// Зберегти окремі файли по рівнях
+$fetcher->saveGeoJSON('zoddak-level-1-comarca.geojson', $allData['level1_comarca']);
+$fetcher->saveGeoJSON('zoddak-level-2-municipio.geojson', $allData['level2_municipio']);
+$fetcher->saveGeoJSON('zoddak-level-3-distrito.geojson', $allData['level3_distrito']);
+$fetcher->saveGeoJSON('zoddak-level-4-barrio.geojson', $allData['level4_barrio']);
+
+// Зберегти все разом
+$allFeatures = array_merge(
+    $allData['level1_comarca'],
+    $allData['level2_municipio'],
+    $allData['level3_distrito'],
+    $allData['level4_barrio']
+);
+$fetcher->saveGeoJSON('zoddak-all-levels.geojson', $allFeatures);
+
+// Створити мапінг рівнів для фронтенду (як у поточної системи)
+$fetcher->saveGeoJSON('level-1-region.geojson', $allData['level1_comarca']);
+$fetcher->saveGeoJSON('level-2-cities.geojson', $allData['level2_municipio']);
+$fetcher->saveGeoJSON('level-3-neighborhoods.geojson', array_merge($allData['level3_distrito'], $allData['level4_barrio']));
+
+// Статистика
+$endTime = microtime(true);
+$duration = round($endTime - $startTime, 2);
+
+$fetcher->printStats();
+echo "\n⏱️  Час виконання: {$duration} секунд\n";
+echo "✅ ГОТОВО!\n";
+echo "═══════════════════════════════════════════════════════════\n";
