@@ -106,23 +106,7 @@ get_header();
         <a class="service-right-item" href="/construction-service">Construction</a>
         <a class="service-right-item" href="/mortgage">Mortgage</a>
       </div>
-  
-      <div class="service-right-bttns">
-        <h3 class="service-right-title service-righ-projects">Our projects</h3>
-        <div class="blog-inner__buttons">
-          <button class="slidePrev" disabled="">
-            <img src="<?php echo get_template_directory_uri(); ?>/icons/arrow-left.svg" alt="Arrow Left" class="blog-inner__buttons--arrows">
-          </button>
-          <button class="slideNext">
-            <img src="<?php echo get_template_directory_uri(); ?>/icons/arrow-left.svg" alt="Arrow Left" class="blog-inner__buttons--arrows arrow-right">
-          </button>
-        </div>
-      </div>
     </div>
-	<div class="service-right-bottom slider-wrapper">
-		<div class="cards-container" style="transform: translateX(0%);">
-		</div>
-	</div>
 	</div>
 	</div>
 	</div>
