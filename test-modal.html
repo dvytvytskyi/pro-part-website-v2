@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Modal</title>
+    <link rel="stylesheet" href="pro-part.es/wp-content/themes/propart-spain/style.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+        }
+        .test-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .test-button {
+            padding: 15px 30px;
+            background: #313131;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px;
+        }
+        .test-button:hover {
+            background: #555;
+        }
+        .wrapperMapPage {
+            position: relative;
+        }
+    </style>
+</head>
+<body class="wrapperMapPage">
+    <div class="test-container">
+        <h1>Тест модалки фільтрів</h1>
+        <p>Натисніть кнопку щоб відкрити модалку:</p>
+        
+        <button class="test-button" id="filterMobile">
+            📱 Відкрити модалку (filterMobile)
+        </button>
+        
+        <button class="test-button" id="filterMobilePhone">
+            📱 Відкрити модалку (filterMobilePhone)
+        </button>
+        
+        <button class="test-button" onclick="checkModal()">
+            🔍 Перевірити елементи
+        </button>
+    </div>
+
+    <!-- Modal -->
+    <div class="adapriveFilters__bg" id="modalAdaptiveFilters">
+        <div class="adapriveFilters">
+            <div class="adapriveFilters__header">
+                <h2 class="adapriveFilters__header-title">Filter</h2>
+                <button class="adapriveFilters__header-btnClose">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                        <path d="M14.1667 5.83355L5.83337 14.1668M14.1667 14.1668L5.83337 5.8335" stroke="#313131"
+                            stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                </button>
+            </div>
+            <div class="adapriveFilters__main">
+                <div class="adapriveFilters__main-buttons map">
+                    <div class="adapriveFilters__main-btn active" id="offPlanAdaptiveBtn">
+                        Off plan
+                    </div>
+                    <div class="adapriveFilters__main-btn" id="secondaryAdaptiveBtn">
+                        Secondary
+                    </div>
+                    <div class="adapriveFilters__main-btn" id="rentAdaptiveBtn">
+                        Rent
+                    </div>
+                </div>
+                
+                <!-- Rent Type Filter for Mobile -->
+                <div class="adapriveFilters__rent-type-mobile" id="mapRentTypeMobile" style="display: none; margin-top: 16px;">
+                    <div class="adapriveFilters__main-buttons map">
+                        <div class="adapriveFilters__main-btn active" id="rentLongTermMobileBtn" data-rent-type="long">
+                            Long term
+                        </div>
+                        <div class="adapriveFilters__main-btn" id="rentShortTermMobileBtn" data-rent-type="short">
+                            Short term
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function checkModal() {
+            const modal = document.getElementById("modalAdaptiveFilters");
+            const btn1 = document.getElementById("filterMobile");
+            const btn2 = document.getElementById("filterMobilePhone");
+            const closeBtn = document.querySelector(".adapriveFilters__header-btnClose");
+            
+            console.log("=== Перевірка елементів ===");
+            console.log("Modal:", modal);
+            console.log("Button 1:", btn1);
+            console.log("Button 2:", btn2);
+            console.log("Close button:", closeBtn);
+            console.log("Modal classes:", modal?.className);
+            console.log("Modal computed display:", window.getComputedStyle(modal).display);
+            
+            alert(`
+Modal: ${modal ? '✅' : '❌'}
+Button 1: ${btn1 ? '✅' : '❌'}
+Button 2: ${btn2 ? '✅' : '❌'}
+Close button: ${closeBtn ? '✅' : '❌'}
+Modal display: ${window.getComputedStyle(modal).display}
+            `);
+        }
+
+        // Setup modal handlers
+        function setupModalHandlers() {
+            const filterButton = document.getElementById("filterMobile");
+            const filterButton2 = document.getElementById("filterMobilePhone");
+            const modalAdaptiveFilters = document.getElementById("modalAdaptiveFilters");
+            const closeButton = document.querySelector(".adapriveFilters__header-btnClose");
+
+            console.log("Setup Modal Handlers:", {
+                filterButton: !!filterButton,
+                filterButton2: !!filterButton2,
+                modalAdaptiveFilters: !!modalAdaptiveFilters,
+                closeButton: !!closeButton
+            });
+
+            if (!modalAdaptiveFilters) {
+                console.error("Modal element not found!");
+                return;
+            }
+
+            const openModal = () => {
+                console.log("Opening modal, window width:", window.innerWidth);
+                modalAdaptiveFilters.classList.add("active");
+                document.body.style.overflow = "hidden";
+                console.log("Modal classes:", modalAdaptiveFilters.className);
+                console.log("Modal display after open:", window.getComputedStyle(modalAdaptiveFilters).display);
+            };
+
+            const closeModal = () => {
+                console.log("Closing modal");
+                modalAdaptiveFilters.classList.remove("active");
+                document.body.style.overflow = "";
+            };
+
+            if (filterButton) {
+                filterButton.addEventListener("click", (e) => {
+                    console.log("Filter button clicked");
+                    e.preventDefault();
+                    openModal();
+                });
+            }
+            
+            if (filterButton2) {
+                filterButton2.addEventListener("click", (e) => {
+                    console.log("Filter button 2 clicked");
+                    e.preventDefault();
+                    openModal();
+                });
+            }
+            
+            if (closeButton) {
+                closeButton.addEventListener("click", (e) => {
+                    console.log("Close button clicked");
+                    e.preventDefault();
+                    closeModal();
+                });
+            }
+
+            // Close modal if clicking outside of it
+            modalAdaptiveFilters.addEventListener("click", (e) => {
+                if (e.target === modalAdaptiveFilters) {
+                    console.log("Clicked outside modal content");
+                    closeModal();
+                }
+            });
+        }
+
+        // Initialize
+        document.addEventListener("DOMContentLoaded", () => {
+            console.log("DOM loaded, setting up modal handlers");
+            setupModalHandlers();
+        });
+    </script>
+</body>
+</html>
+
