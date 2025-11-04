@@ -4936,11 +4936,11 @@ let allProjectsGeoJSON = null;
 							
 							let redirectUrl;
 							if (visible === 'Rent') {
-								redirectUrl = `/rentById?project=${projectId}&rent_type=${rentType}`;
+								redirectUrl = `/rent/?project=${projectId}&rent_type=${rentType}`;
 							} else if (visible === 'Secondary') {
-								redirectUrl = `/secondaryById?project=${projectId}`;
+								redirectUrl = `/secondary/?project=${projectId}`;
 							} else {
-								redirectUrl = `/offPlanById?project=${projectId}`;
+								redirectUrl = `/new-building/?project=${projectId}`;
 							}
 							window.open(redirectUrl, '_blank');
 						});
@@ -5069,11 +5069,11 @@ let allProjectsGeoJSON = null;
 					 
 					 let redirectUrl;
 					 if (visible === 'Rent') {
-						 redirectUrl = `/rentById?project=${projectId}&rent_type=${rentType}`;
+						 redirectUrl = `/rent/?project=${projectId}&rent_type=${rentType}`;
 					 } else if (visible === 'Secondary') {
-						 redirectUrl = `/secondaryById?project=${projectId}`;
+						 redirectUrl = `/secondary/?project=${projectId}`;
 					 } else {
-						 redirectUrl = `/offPlanById?project=${projectId}`;
+						 redirectUrl = `/new-building/?project=${projectId}`;
 					 }
 					 window.open(redirectUrl, '_blank');
 				});
@@ -5372,11 +5372,11 @@ function createProjectCard(props) {
         
         let redirectUrl;
         if (visible === 'Rent') {
-            redirectUrl = `/rentById?project=${projectId}&rent_type=${rentType}`;
+            redirectUrl = `/rent/?project=${projectId}&rent_type=${rentType}`;
         } else if (visible === 'Secondary') {
-            redirectUrl = `/secondaryById?project=${projectId}`;
+            redirectUrl = `/secondary/?project=${projectId}`;
         } else {
-            redirectUrl = `/offPlanById?project=${projectId}`;
+            redirectUrl = `/new-building/?project=${projectId}`;
         }
         window.open(redirectUrl, '_blank');
     });
