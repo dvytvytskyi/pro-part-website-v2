@@ -4864,167 +4864,36 @@ let allProjectsGeoJSON = null;
 						console.log(`Found ${projectsAtLocation.length} projects at clicked coordinates ${clickedLat}, ${clickedLng}`);
 					}
 
-					// If multiple projects at this location, show scrollable popup
-					if (projectsAtLocation.length > 1) {
-						const locationName = properties.town || properties.name || "Multiple Projects";
-						
-						const projectsList = projectsAtLocation.map(project => {
-							// Safely parse images with error handling
-							let images = [];
-							try {
-								images = JSON.parse(project.images ? JSON.stringify(project.images) : '[]');
-								if (!Array.isArray(images)) {
-									images = project.image_url ? [{ image_url: project.image_url }] : [];
-								}
-							} catch (error) {
-								images = project.image_url ? [{ image_url: project.image_url }] : [];
-							}
-
-							const projectImage = project.image_url || defaultImage;
-							const projectName = project.development_name || project.name || `Property in ${project.town}`;
-							const projectPrice = project.price || project.price_to || 0;
-							const projectCurrency = project.currency || "EUR";
-							const projectType = project.type || "Property";
-							const projectSubtype = project.subtype || "";
-							const projectSize = project.built_area || 0;
-							const projectId = project.id || project._id;
-
-							return `
-								<div class="project-item" style="display: flex; gap: 12px; padding: 12px; border-bottom: 1px solid #eee; align-items: center;">
-									<div style="flex-shrink: 0; width: 60px; height: 60px; border-radius: 8px; overflow: hidden;">
-										<img src="${projectImage}" alt="${projectName}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='${defaultImage}'" />
-									</div>
-									<div style="flex: 1; min-width: 0;">
-										<h3 style="font-size: 14px; font-weight: bold; margin: 0 0 4px 0; color: #333; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${projectName}</h3>
-										<div style="display: flex; align-items: center; gap: 6px; font-size: 11px; color: #666; margin-bottom: 6px;">
-											<span>${projectType}</span>
-											${projectSubtype ? '<div style="width: 1px; height: 10px; background-color: #ccc;"></div>' : ''}
-											<span>${projectSubtype}</span>
-											${projectSize ? '<div style="width: 1px; height: 10px; background-color: #ccc;"></div>' : ''}
-											<span>${projectSize ? `${projectSize} m²` : ''}</span>
-										</div>
-										<div style="display: flex; justify-content: space-between; align-items: center;">
-											<span style="font-size: 12px; font-weight: bold; color: #333;">${projectCurrency} ${Number(projectPrice).toLocaleString('de-DE')}</span>
-											<button class="mapPopupBtnRedirect" data-id="${projectId}" style="background-color: #333333; color: white; border: none; padding: 6px 10px; border-radius: 4px; cursor: pointer; font-size: 11px;">View</button>
-										</div>
-									</div>
-								</div>
-							`;
-						}).join('');
-
-						const multiProjectPopupContent = `
-							<div class="mapPopup" style="max-width: 400px; max-height: 500px;">
-								<div style="padding: 16px; position: relative;">
-									<button class="popup-close-btn" style="position: absolute; top: 8px; right: 8px; background: none; border: none; font-size: 18px; cursor: pointer; color: #666; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center;">×</button>
-									<h2 style="font-size: 18px; font-weight: bold; color: #333; text-align: left; padding-right: 20px;">${locationName}</h2>
-									<div style="font-size: 12px; color: #666; text-align: left; margin-bottom: 16px;">${projectsAtLocation.length} projects available</div>
-									<div class="projects-scroll-container" style="max-height: 350px; overflow-y: auto; border: 1px solid #eee; border-radius: 8px; background: #fff;">
-										${projectsList}
-									</div>
-								</div>
-								<button class="mapPopup__close-mobile">Close</button>
-							</div>`;
-
-						const popupNode = document.createElement('div');
-						popupNode.innerHTML = multiProjectPopupContent;
-						
-					// Add event listeners to all "View" buttons
-					popupNode.querySelectorAll('.mapPopupBtnRedirect').forEach(button => {
-						button.addEventListener('click', (ev) => {
-							const projectId = ev.target.dataset.id;
-							const urlParams = new URLSearchParams(window.location.search);
-							const rentType = urlParams.get("rent_type") || "long";
-							
-							let redirectUrl;
-							if (visible === 'Rent') {
-								redirectUrl = `/rent/?project=${projectId}&rent_type=${rentType}`;
-							} else if (visible === 'Secondary') {
-								redirectUrl = `/secondary/?project=${projectId}`;
-							} else {
-								redirectUrl = `/new-building/?project=${projectId}`;
-							}
-							window.open(redirectUrl, '_blank');
-						});
-					});
-
-					// Add event listener for close button
-					const closeBtn = popupNode.querySelector('.popup-close-btn');
-					if (closeBtn) {
-						closeBtn.addEventListener('click', () => {
-							// Find and remove the popup
-							if (currentPopup) {
-								currentPopup.remove();
-								currentPopup = null;
-							}
-						});
-					}
-						
-						// Add event listener for mobile close button
-						const mobileCloseBtn = popupNode.querySelector('.mapPopup__close-mobile');
-						if (mobileCloseBtn) {
-							mobileCloseBtn.addEventListener('click', (ev) => {
-								ev.stopPropagation();
-								if (currentPopup) {
-									currentPopup.remove();
-									currentPopup = null;
-								}
-							});
-						}
-
-					console.log(`Opening multi-project popup at clicked coordinates: ${clickedCoordinates[0]}, ${clickedCoordinates[1]}`);
-					
-					// Визначаємо чи це мобільний пристрій
-					const isMobile = window.innerWidth <= 768;
-					
-					// На мобільних центруємо карту на точці, щоб popup з'явився посередині
-					if (isMobile) {
-						map.easeTo({
-							center: clickedCoordinates,
-							duration: 300
-						});
+				// If multiple projects at this location, show projects list sidebar
+				if (projectsAtLocation.length > 1) {
+					console.log(`Opening projects list with ${projectsAtLocation.length} projects at clicked coordinates`);
 					
 					// Закриваємо попередній popup, якщо він існує
 					if (currentPopup) {
 						currentPopup.remove();
+						currentPopup = null;
 					}
 					
-					// Чекаємо завершення анімації
-					setTimeout(() => {
-						const mapCenter = map.getCenter();
-						const popupOptions = {
-							closeButton: false,
-							className: 'project-popup',
-							anchor: 'bottom',
-							offset: [0, -10]
-						};
-						
-						currentPopup = new mapboxgl.Popup(popupOptions)
-							.setLngLat([mapCenter.lng, mapCenter.lat])
-							.setDOMContent(popupNode)
-							.addTo(map);
-					}, 300);
-			} else {
-				// Закриваємо попередній popup, якщо він існує
-				if (currentPopup) {
-					currentPopup.remove();
-				}
-				
-				// Десктопна версія - відцентрований над точкою
-				const popupOptions = {
-					closeButton: false,
-					className: 'project-popup',
-					anchor: 'bottom',
-					offset: [0, -10]
-				};
-				
-				currentPopup = new mapboxgl.Popup(popupOptions)
-					.setLngLat(clickedCoordinates)
-					.setDOMContent(popupNode)
-					.addTo(map);
-			}
+					// Конвертуємо проекти в формат, який очікує showPolygonProjectsList
+					const projectsForList = projectsAtLocation.map(project => ({
+						properties: {
+							id: project.id || project._id,
+							name: project.development_name || project.name || `Property in ${project.town}`,
+							type: project.type || "Property",
+							subtype: project.subtype || "",
+							size: project.built_area || 0,
+							price: project.price || project.price_to || 0,
+							currency: project.currency || "EUR",
+							images: project.images || (project.image_url ? JSON.stringify([{image_url: project.image_url}]) : '[]'),
+							image_url: project.image_url
+						}
+					}));
+					
+					// Використовуємо існуючу функцію для показу списку проектів
+					showPolygonProjectsList(projectsForList);
 					
 					return;
-				}
+			}
 
 					// For single projects, show normal popup
 					// Safely parse images with error handling
