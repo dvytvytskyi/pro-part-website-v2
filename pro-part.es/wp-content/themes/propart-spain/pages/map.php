@@ -4936,11 +4936,11 @@ let allProjectsGeoJSON = null;
 							
 							let redirectUrl;
 							if (visible === 'Rent') {
-								redirectUrl = `/rent?project=${projectId}&rent_type=${rentType}`;
+								redirectUrl = `/rentById?project=${projectId}&rent_type=${rentType}`;
 							} else if (visible === 'Secondary') {
-								redirectUrl = `/secondary?project=${projectId}`;
+								redirectUrl = `/secondaryById?project=${projectId}`;
 							} else {
-								redirectUrl = `/new-building?project=${projectId}`;
+								redirectUrl = `/offPlanById?project=${projectId}`;
 							}
 							window.open(redirectUrl, '_blank');
 						});
@@ -5069,11 +5069,11 @@ let allProjectsGeoJSON = null;
 					 
 					 let redirectUrl;
 					 if (visible === 'Rent') {
-						 redirectUrl = `/rent?project=${projectId}&rent_type=${rentType}`;
+						 redirectUrl = `/rentById?project=${projectId}&rent_type=${rentType}`;
 					 } else if (visible === 'Secondary') {
-						 redirectUrl = `/secondary?project=${projectId}`;
+						 redirectUrl = `/secondaryById?project=${projectId}`;
 					 } else {
-						 redirectUrl = `/new-building?project=${projectId}`;
+						 redirectUrl = `/offPlanById?project=${projectId}`;
 					 }
 					 window.open(redirectUrl, '_blank');
 				});
@@ -5367,7 +5367,17 @@ function createProjectCard(props) {
     // Додаємо обробник кліку
     card.addEventListener('click', () => {
         const visible = new URLSearchParams(window.location.search).get('visible') || 'Off plan';
-        const redirectUrl = `/${visible !== 'Secondary' ? `new-building?project=${projectId}` : `secondary?project=${projectId}`}`;
+        const urlParams = new URLSearchParams(window.location.search);
+        const rentType = urlParams.get("rent_type") || "long";
+        
+        let redirectUrl;
+        if (visible === 'Rent') {
+            redirectUrl = `/rentById?project=${projectId}&rent_type=${rentType}`;
+        } else if (visible === 'Secondary') {
+            redirectUrl = `/secondaryById?project=${projectId}`;
+        } else {
+            redirectUrl = `/offPlanById?project=${projectId}`;
+        }
         window.open(redirectUrl, '_blank');
     });
     
@@ -9342,7 +9352,7 @@ function hidePolygonProjectsList() {
 
 /* --- Вікно для ОДНОГО проекту --- */
 .mapboxgl-popup-content .mapPopup {
-    width: 380px !important;
+    width: 290px !important;
 }
 .mapboxgl-popup-content .swiper-container {
     height: 200px !important;
