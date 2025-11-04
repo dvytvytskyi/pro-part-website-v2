@@ -4997,20 +4997,20 @@ let allProjectsGeoJSON = null;
 								.setDOMContent(popupNode)
 								.addTo(map);
 						}, 300);
-					} else {
-						// Десктопна версія без змін
-						const popupOptions = {
-							closeButton: false,
-							className: 'project-popup',
-							anchor: 'left',
-							offset: 15
-						};
-						
-						new mapboxgl.Popup(popupOptions)
-							.setLngLat(clickedCoordinates)
-							.setDOMContent(popupNode)
-							.addTo(map);
-					}
+				} else {
+					// Десктопна версія - відцентрований над точкою
+					const popupOptions = {
+						closeButton: false,
+						className: 'project-popup',
+						anchor: 'bottom',
+						offset: [0, -10]
+					};
+					
+					new mapboxgl.Popup(popupOptions)
+						.setLngLat(clickedCoordinates)
+						.setDOMContent(popupNode)
+						.addTo(map);
+				}
 					
 					return;
 				}
@@ -5121,24 +5121,24 @@ let allProjectsGeoJSON = null;
 							new Swiper(popupNode.querySelector('.swiper-container'), { loop: true });
 						}
 					}, 300);
-				} else {
-					// Десктопна версія без змін
-					const popupOptions = {
-						closeButton: false,
-						className: 'project-popup',
-						anchor: 'left',
-						offset: 15
-					};
+			} else {
+				// Десктопна версія - відцентрований над точкою
+				const popupOptions = {
+					closeButton: false,
+					className: 'project-popup',
+					anchor: 'bottom',
+					offset: [0, -10]
+				};
+				
+				new mapboxgl.Popup(popupOptions)
+					.setLngLat(clickedCoordinates)
+					.setDOMContent(popupNode)
+					.addTo(map);
 					
-					new mapboxgl.Popup(popupOptions)
-						.setLngLat(clickedCoordinates)
-						.setDOMContent(popupNode)
-						.addTo(map);
-						
-					if (window.Swiper) {
-						new Swiper(popupNode.querySelector('.swiper-container'), { loop: true });
-					}
+				if (window.Swiper) {
+					new Swiper(popupNode.querySelector('.swiper-container'), { loop: true });
 				}
+			}
 			}
 
 				// ВСТАВТЕ ЦЮ ВЕРСІЮ

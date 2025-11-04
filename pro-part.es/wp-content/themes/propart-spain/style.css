@@ -997,13 +997,13 @@ ul {
     
     /* Основна обгортка попапу від Mapbox */
     .mapboxgl-popup {
-        max-width: 300px !important; /* Зроблено ширшим */
+        max-width: 150px !important; /* Зменшено в 2 рази */
         box-shadow: none !important;
         outline: none !important;
     }
     .mapboxgl-popup-content {
         padding: 0 !important;
-        border-radius: 8px !important; /* Змінено на 8px */
+        border-radius: 8px !important;
         box-shadow: 0 5px 20px rgba(0, 0, 0, 0.25);
     }
     .mapboxgl-popup-tip,
@@ -1017,9 +1017,9 @@ ul {
     .mapPopup {
         position: relative;
         background-color: #fff;
-        border-radius: 8px; /* Змінено на 8px */
+        border-radius: 8px;
         cursor: pointer;
-        width: 300px; /* Зроблено ширшим */
+        width: 150px; /* Зменшено в 2 рази */
         font-family: 'Onest', Arial, sans-serif;
         overflow: hidden;
     }
@@ -1032,7 +1032,7 @@ ul {
     /* Слайдер та зображення */
     .mapPopup .swiper-container {
         width: 100%;
-        height: 180px; /* Трохи збільшено висоту зображення */
+        height: 90px; /* Зменшено в 2 рази */
     }
     .mapPopup .imgMapPopup {
         width: 100%;
@@ -1043,12 +1043,12 @@ ul {
     
     /* Текстовий блок */
     .mapPopup__texts {
-        padding: 16px;
+        padding: 8px; /* Зменшено padding */
     }
 
     .mapPopup__info-title {
         color: #111;
-        font-size: 20px; /* Зменшено шрифт назви */
+        font-size: 12px; /* Зменшено шрифт */
         font-weight: 600;
         white-space: nowrap;
         overflow: hidden;
@@ -1058,14 +1058,14 @@ ul {
     .mapPopup__info-list {
         display: flex;
         align-items: left;
-        gap: 8px;
-        font-size: 14px; /* Збільшено для кращої читабельності */
+        gap: 4px; /* Зменшено gap */
+        font-size: 9px; /* Зменшено шрифт */
         color: #555;
-        margin-bottom: 16px;
+        margin-bottom: 8px;
     }
     
     .mapPopupLine {
-        height: 14px;
+        height: 9px; /* Зменшено висоту */
         width: 1px;
         background: #ddd;
     }
@@ -1079,18 +1079,18 @@ ul {
 
     .mapPopup__info-price {
         color: #111;
-        font-size: 18px; /* Зменшено шрифт ціни */
+        font-size: 11px; /* Зменшено шрифт ціни */
         font-weight: 600;
-        white-space: nowrap; /* Гарантує, що ціна буде в один рядок */
+        white-space: nowrap;
     }
     
     .mapPopupBtnRedirect {
         font-family: Onest;
-        font-size: 14px;
+        font-size: 9px; /* Зменшено шрифт */
         font-weight: 500;
-        padding: 10px 20px;
+        padding: 6px 10px; /* Зменшено padding */
         background-color: #e53333;
-        border-radius: 8px;
+        border-radius: 6px; /* Зменшено радіус */
         border: none;
         color: white;
         cursor: pointer;
