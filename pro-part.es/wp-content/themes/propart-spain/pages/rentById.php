@@ -5368,22 +5368,33 @@ window.addEventListener("resize", hideButtonsOnResizeSecondary);
         }
        
 function toggleProjectFavorite(project, storageKey, buttonElement) {
+    console.log('🔄 toggleProjectFavorite called with:', { project, storageKey });
+    
     const savedProjects = JSON.parse(localStorage.getItem(storageKey)) || [];
-    const projectIndex = savedProjects.findIndex(p => p.id === project.id);
+    console.log('📦 Current saved projects:', savedProjects);
+    
+    // Convert both IDs to strings for comparison to avoid type mismatch
+    const projectId = String(project.id);
+    const projectIndex = savedProjects.findIndex(p => String(p.id) === projectId);
     const favoriteBtn = buttonElement || document.getElementById('add-to-favorites');
+    
+    console.log('🔍 Looking for project with ID:', projectId, 'Found at index:', projectIndex);
     
     if (projectIndex > -1) {
         // Remove project from favorites
         savedProjects.splice(projectIndex, 1);
         if (favoriteBtn) favoriteBtn.textContent = 'Add to favorites';
+        console.log('❌ Removed from favorites');
     } else {
         // Add project to favorites
         savedProjects.push(project);
         if (favoriteBtn) favoriteBtn.textContent = 'Remove from favorites';
+        console.log('✅ Added to favorites');
     }
 
     // Update localStorage
     localStorage.setItem(storageKey, JSON.stringify(savedProjects));
+    console.log('💾 Updated localStorage:', savedProjects);
 }
 
 function updateAmenityStatus(amenities, id, key) {
@@ -5567,11 +5578,18 @@ function fetchProjectSecondary() {
 		  // --- 7. Setup "Add to Favorites" Button ---
 		  const favoriteBtn = document.getElementById('add-to-favorites');
       if(favoriteBtn) {
+          console.log('🔘 Setting up favorites button for project ID:', data.id);
+          
           const storageKey = 'favoriteRentProjects';
           
           const savedProjects = JSON.parse(localStorage.getItem(storageKey)) || [];
-          // Use `data.id` as the unique identifier
-          const isProjectFavorite = savedProjects.some(p => p.id === data.id);
+          
+          // Convert to string for comparison
+          const projectId = String(data.id);
+          const isProjectFavorite = savedProjects.some(p => String(p.id) === projectId);
+          
+          console.log('💖 Is project favorite?', isProjectFavorite);
+          console.log('📋 Saved projects:', savedProjects);
                 
           favoriteBtn.textContent = isProjectFavorite ? 'Remove from favorites' : 'Add to favorites';
 
@@ -5580,6 +5598,7 @@ function fetchProjectSecondary() {
           favoriteBtn.parentNode.replaceChild(newFavoriteBtn, favoriteBtn);
           
           newFavoriteBtn.addEventListener('click', () => {
+             console.log('👆 Favorite button clicked!');
              // Pass the relevant parts of the data object
              const projectSummary = {
                 id: data.id,
@@ -5589,6 +5608,8 @@ function fetchProjectSecondary() {
              };
              toggleProjectFavorite(projectSummary, storageKey, newFavoriteBtn);
           });
+      } else {
+          console.warn('⚠️ Favorites button not found!');
       }
 			
 		  // Assuming fetchAndRenderSlides is a function you have
