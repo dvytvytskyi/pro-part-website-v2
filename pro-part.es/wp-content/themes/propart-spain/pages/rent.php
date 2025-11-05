@@ -261,6 +261,15 @@
                                 Rent
                             </div>
                         </div>
+                        <!-- Rent type buttons (Long/Short term) -->
+                        <div class="adapriveFilters__rent-type-buttons" id="rentTypeButtonsContainer">
+                            <div class="adapriveFilters__main-btn active" id="rentLongTermBtn">
+                                Long term
+                            </div>
+                            <div class="adapriveFilters__main-btn" id="rentShortTermBtn">
+                                Short term
+                            </div>
+                        </div>
                         <div class="adapriveFilters__main-dropdowns">
                             <div>
                                 <div id="secondaryLocationFilterMobile" class="filterPropertiesWrapper__dropDown">

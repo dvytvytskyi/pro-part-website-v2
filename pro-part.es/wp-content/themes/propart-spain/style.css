@@ -2488,13 +2488,28 @@ ul {
     #clearBtnSecondaryFilter,
     #offPlanAdaptiveBtnSecondary,
     #secondaryAdaptiveBtnSecondary,
-    #rentAdaptiveBtnSecondary {
+    #rentAdaptiveBtnSecondary,
+    #openFilterModleButton {
         display: none !important;
     }
     
     /* Hide filter type buttons on Secondary page, but keep the dropdowns */
     #secondaryAdaptiveFilters .dapriveFilters__main-buttons > div:first-child {
         display: none !important;
+    }
+    
+    /* Rent type buttons styling */
+    .adapriveFilters__rent-type-buttons {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 20px;
+        padding: 0 4px;
+    }
+    
+    .adapriveFilters__rent-type-buttons .adapriveFilters__main-btn {
+        flex: 1;
+        height: 48px;
+        font-size: 14px;
     }
 }
 
