@@ -7836,6 +7836,9 @@ function createSecondaryProjectCard(project) { // Renamed function for clarity
             // Long term click handler
             longTermBtn.addEventListener('click', function() {
                 if (!this.classList.contains('active')) {
+                    // Immediately update UI
+                    longTermBtn.classList.add('active');
+                    shortTermBtn.classList.remove('active');
                     updateRentType('long');
                 }
             });
@@ -7843,6 +7846,9 @@ function createSecondaryProjectCard(project) { // Renamed function for clarity
             // Short term click handler
             shortTermBtn.addEventListener('click', function() {
                 if (!this.classList.contains('active')) {
+                    // Immediately update UI
+                    shortTermBtn.classList.add('active');
+                    longTermBtn.classList.remove('active');
                     updateRentType('short');
                 }
             });
