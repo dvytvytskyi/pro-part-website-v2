@@ -2524,6 +2524,20 @@ ul {
         flex: 1;
         height: 48px;
         font-size: 14px;
+        transition: all 0.3s ease;
+    }
+    
+    /* Ensure active state works for rent type buttons */
+    .adapriveFilters__rent-type-buttons .adapriveFilters__main-btn.active {
+        color: #fff !important;
+        background: #313131 !important;
+        border: 1px solid #313131 !important;
+    }
+    
+    .adapriveFilters__rent-type-buttons .adapriveFilters__main-btn:not(.active) {
+        color: #313131;
+        background: #f6f6f6;
+        border: 1px solid #ececec;
     }
 }
 

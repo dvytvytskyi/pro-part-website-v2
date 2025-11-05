@@ -7820,9 +7820,14 @@ function createSecondaryProjectCard(project) { // Renamed function for clarity
         const longTermBtn = document.getElementById('rentLongTermBtn');
         const shortTermBtn = document.getElementById('rentShortTermBtn');
         
+        console.log('Long term button:', longTermBtn);
+        console.log('Short term button:', shortTermBtn);
+        
         if (longTermBtn && shortTermBtn) {
             const urlParams = new URLSearchParams(window.location.search);
             const currentRentType = urlParams.get('rent_type') || 'long';
+            
+            console.log('Current rent type from URL:', currentRentType);
             
             // Set active state based on URL
             if (currentRentType === 'long') {
@@ -7834,23 +7839,31 @@ function createSecondaryProjectCard(project) { // Renamed function for clarity
             }
             
             // Long term click handler
-            longTermBtn.addEventListener('click', function() {
-                if (!this.classList.contains('active')) {
-                    // Immediately update UI
-                    longTermBtn.classList.add('active');
-                    shortTermBtn.classList.remove('active');
-                    updateRentType('long');
-                }
+            longTermBtn.addEventListener('click', function(e) {
+                console.log('Long term clicked!');
+                e.preventDefault();
+                e.stopPropagation();
+                
+                // Immediately update UI
+                longTermBtn.classList.add('active');
+                shortTermBtn.classList.remove('active');
+                
+                console.log('Switching to long term...');
+                updateRentType('long');
             });
             
             // Short term click handler
-            shortTermBtn.addEventListener('click', function() {
-                if (!this.classList.contains('active')) {
-                    // Immediately update UI
-                    shortTermBtn.classList.add('active');
-                    longTermBtn.classList.remove('active');
-                    updateRentType('short');
-                }
+            shortTermBtn.addEventListener('click', function(e) {
+                console.log('Short term clicked!');
+                e.preventDefault();
+                e.stopPropagation();
+                
+                // Immediately update UI
+                shortTermBtn.classList.add('active');
+                longTermBtn.classList.remove('active');
+                
+                console.log('Switching to short term...');
+                updateRentType('short');
             });
             
             // Update rent type and reload
@@ -7858,8 +7871,11 @@ function createSecondaryProjectCard(project) { // Renamed function for clarity
                 const currentUrl = new URL(window.location.href);
                 currentUrl.searchParams.set('rent_type', rentType);
                 currentUrl.searchParams.set('page', '1'); // Reset to first page
+                console.log('Redirecting to:', currentUrl.toString());
                 window.location.href = currentUrl.toString();
             }
+        } else {
+            console.warn('Rent type buttons not found!');
         }
     });
 
