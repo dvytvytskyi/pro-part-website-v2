@@ -2061,7 +2061,7 @@ ul {
     padding-bottom: 24px;
 }
 
-#secondaryFiltetAdaptive {
+#secondaryFiltetAdaptiveOld {
     display: none;
 
     @media (max-width: 1409px) {
@@ -2492,6 +2492,12 @@ ul {
 
 #offPlanFiltetAdaptive {
     display: flex !important; /* Temporarily force display for testing */
+    cursor: pointer;
+    pointer-events: auto;
+}
+
+#secondaryFiltetAdaptive {
+    display: flex !important; /* Force display for mobile */
     cursor: pointer;
     pointer-events: auto;
 }
