@@ -1605,8 +1605,8 @@ ul {
         padding-bottom: max(20px, env(safe-area-inset-bottom));
         position: fixed;
         bottom: 0;
-        left: 20px;
-        right: 20px;
+        left: 0px;
+        right: 0px;
         width: auto;
         background: #fff;
         border-top: 1px solid #eee;
