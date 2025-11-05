@@ -4578,9 +4578,13 @@ hr {
         top: 105px;
         left: 0;
         right: 0;
+        bottom: 0;
         background-color: #f6f6f6;
         padding: 15px;
+        padding-bottom: 30px;
         z-index: 3;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
     }
 }
 
@@ -6474,9 +6478,13 @@ li .custom-checkbox label {
 @media (max-width: 768px), (max-width: 1024px) {
     .mainPage .showNav {
         width: 100%;
-        height: 750%;
-        padding: 0;
+        height: auto;
+        bottom: 0;
+        padding: 15px;
+        padding-bottom: 30px;
         text-align: center;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
     }
     
     .aiButton {
