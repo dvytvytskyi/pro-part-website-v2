@@ -1218,7 +1218,7 @@ ul {
         z-index: 10000;
         position: relative;
         background-color: #fff;
-        padding: 24px 32px;
+        padding: 24px 10px;
     }
 
     /* Specific styling for offPlanAdaptiveFilters modal */
