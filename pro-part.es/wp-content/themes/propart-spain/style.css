@@ -2492,8 +2492,8 @@ ul {
         display: none !important;
     }
     
-    /* Hide filter type buttons container on Secondary page */
-    #secondaryAdaptiveFilters .dapriveFilters__main-buttons {
+    /* Hide filter type buttons on Secondary page, but keep the dropdowns */
+    #secondaryAdaptiveFilters .dapriveFilters__main-buttons > div:first-child {
         display: none !important;
     }
 }
