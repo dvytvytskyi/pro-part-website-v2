@@ -5357,19 +5357,19 @@ window.addEventListener("resize", hideButtonsOnResizeSecondary);
             }
         }
        
-function toggleProjectFavorite(project, storageKey) {
+function toggleProjectFavorite(project, storageKey, buttonElement) {
     const savedProjects = JSON.parse(localStorage.getItem(storageKey)) || [];
-    const projectIndex = savedProjects.findIndex(p => p._id === project._id);
-    const favoriteBtn = document.getElementById('add-to-favorites');
+    const projectIndex = savedProjects.findIndex(p => p.id === project.id);
+    const favoriteBtn = buttonElement || document.getElementById('add-to-favorites');
     
     if (projectIndex > -1) {
         // Remove project from favorites
         savedProjects.splice(projectIndex, 1);
-        favoriteBtn.textContent = 'Add to favorites';
+        if (favoriteBtn) favoriteBtn.textContent = 'Add to favorites';
     } else {
         // Add project to favorites
         savedProjects.push(project);
-        favoriteBtn.textContent = 'Remove from favorites';
+        if (favoriteBtn) favoriteBtn.textContent = 'Remove from favorites';
     }
 
     // Update localStorage
