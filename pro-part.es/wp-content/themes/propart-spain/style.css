@@ -1238,8 +1238,8 @@ ul {
         left: 0;
         right: 0;
         width: 100%;
-        max-height: 85vh;
-        height: 85vh;
+        max-height: 90vh;
+        height: 90vh;
         border-radius: 24px 24px 0 0;
         margin: 0;
         box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
@@ -1248,11 +1248,17 @@ ul {
         overflow: hidden;
     }
     
+    .adapriveFilters__header {
+        flex-shrink: 0;
+        padding: 20px 20px 16px;
+    }
+    
     .adapriveFilters__main {
         flex: 1;
         display: flex;
         flex-direction: column;
         overflow: hidden;
+        margin-top: 0;
     }
     
     .adapriveFilters__main-drop-buttons {
@@ -1261,6 +1267,11 @@ ul {
         flex-direction: column;
         overflow: hidden;
     }
+    
+    .adapriveFilters__main-buttons {
+        flex-shrink: 0;
+    }
+}
     
     /* Стилі для мобільних фільтрів */
     .mobile-filter-item {
@@ -1379,16 +1390,9 @@ ul {
     }
 }
 
-.adapriveFilters__main-drop-buttons {
-    @media (max-width: 767px) {
-        padding-bottom: 50px;
-    }
-}
-
-/* Прибираємо padding коли кнопки приховані */
 @media (max-width: 767px) {
-    body:not(.map-page) .adapriveFilters__main-drop-buttons {
-        padding-bottom: 0px;
+    .adapriveFilters__main-drop-buttons {
+        padding-bottom: 0;
     }
 }
 
@@ -1447,6 +1451,7 @@ ul {
         -webkit-overflow-scrolling: touch;
         touch-action: pan-y;
         border-bottom: 1px solid transparent;
+        padding-bottom: 80px;
     }
 }
 
@@ -1552,11 +1557,17 @@ ul {
 
 @media (max-width: 767px) {
     .adapriveFilters__main-buttonsBottom {
-        padding-bottom: 5px;
+        padding: 16px 20px;
+        padding-bottom: max(20px, env(safe-area-inset-bottom));
         position: fixed;
         bottom: 0;
-        width: calc(100% - 40px);
+        left: 0;
+        right: 0;
+        width: 100%;
         background: #fff;
+        border-top: 1px solid #eee;
+        z-index: 10;
+        box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
     }
 }
 
