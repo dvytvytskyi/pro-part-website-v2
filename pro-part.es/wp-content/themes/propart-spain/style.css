@@ -1453,6 +1453,45 @@ ul {
         border-bottom: 1px solid transparent;
         padding-bottom: 80px;
     }
+    
+    /* Dropdown body на мобільних */
+    .filterPropertiesWrapper__dropDown_body {
+        max-height: 295px !important; /* Збільшено на 20% */
+        width: 100% !important;
+        max-width: 100% !important;
+        left: 0 !important;
+        right: 0 !important;
+        box-sizing: border-box !important;
+        padding: 8px 16px !important;
+    }
+    
+    .filterPropertiesWrapper__dropDown_list {
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+        overflow-x: hidden !important;
+    }
+    
+    .filterPropertiesWrapper__dropDown_item {
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+        word-wrap: break-word;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    
+    /* Dropdown wrapper */
+    .filterPropertiesWrapper__dropDown {
+        width: 100% !important;
+        position: relative;
+    }
+    
+    /* Dropdown header */
+    .filterPropertiesWrapper__dropDown_header {
+        width: 100% !important;
+        box-sizing: border-box !important;
+    }
 }
 
 .adapriveFilters__main-dropdowns.map {
