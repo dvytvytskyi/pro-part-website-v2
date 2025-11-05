@@ -1601,19 +1601,18 @@ ul {
 
 @media (max-width: 767px) {
     .adapriveFilters__main-buttonsBottom {
-        padding: 16px 0;
+        padding: 16px 16px;
         padding-bottom: max(20px, env(safe-area-inset-bottom));
         position: fixed;
         bottom: 0;
-        left: 16px;
-        right: 16px;
-        width: auto;
+        left: 0;
+        right: 0;
+        width: 100%;
         background: #fff;
         border-top: 1px solid #eee;
         z-index: 10;
         box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
-        margin-left: 0;
-        margin-right: 0;
+        margin: 0;
     }
 }
 
@@ -5070,7 +5069,7 @@ hr {
     }
     
     .adapriveFilters__main-btnClear,
-    .adapriveFilters__main-btnConfirm {
+    -btnConfirm {
         height: 52px !important;
         font-size: 16px !important;
     }
