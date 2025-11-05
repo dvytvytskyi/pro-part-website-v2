@@ -1229,6 +1229,15 @@ ul {
     #offPlanAdaptiveFilters.active {
         display: flex;
     }
+    
+    /* Specific styling for secondaryAdaptiveFilters modal */
+    #secondaryAdaptiveFilters {
+        display: none;
+    }
+
+    #secondaryAdaptiveFilters.active {
+        display: flex;
+    }
 
 @media (max-width: 767px) {
     .adapriveFilters {
@@ -2473,7 +2482,10 @@ ul {
 
 @media (max-width: 767px) {
     #offPlanSortFilter,
-    #offPlanSortFilterMobile {
+    #offPlanSortFilterMobile,
+    #offPlanHandoverFilter,
+    #secondarySortFilterMobile,
+    #clearBtnSecondaryFilter {
         display: none !important;
     }
 }
