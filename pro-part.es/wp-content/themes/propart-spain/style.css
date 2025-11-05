@@ -11015,10 +11015,14 @@ p {
 		top: auto;
 		bottom: -100vh;
 		height: 70vh;
+		max-height: 70vh;
 		width: 100%;
 		border-radius: 20px 20px 0 0;
 		transition: bottom 0.3s ease-in-out;
 		z-index: 1000;
+		display: flex;
+		flex-direction: column;
+		overflow: hidden;
 	}
 	
 	.mapListProjects.active {
@@ -11030,15 +11034,25 @@ p {
 		display: none;
 	}
 	
-	.mapListProjects__list {
-		overflow-y: auto;
-		-webkit-overflow-scrolling: touch;
-		max-height: calc(70vh - 140px);
-	}
-	
 	.mapListProjects__header {
+		flex-shrink: 0;
 		border-bottom: 2px solid #eee;
 		padding: 16px 20px;
+		position: relative;
+	}
+	
+	.mapListProjects__count {
+		flex-shrink: 0;
+	}
+	
+	.mapListProjects__list {
+		flex: 1;
+		overflow-y: scroll !important;
+		overflow-x: hidden;
+		-webkit-overflow-scrolling: touch;
+		overscroll-behavior: contain;
+		height: auto;
+		max-height: none;
 	}
 	
 	/* Handle for draggable sheet */
