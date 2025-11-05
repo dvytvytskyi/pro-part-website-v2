@@ -38,7 +38,7 @@ get_header();
         <div class="project-top-buttons">
           <button
             class="button-white"
-            style="font-size: 14px !important; line-height: 22px"
+            style="font-size: 14px !important; line-height: 22px; display: none;"
             id="add-to-favorites"
           >
             Add to favorites
@@ -49,6 +49,30 @@ get_header();
             class="button-black"
             >Contact us</a
           >
+          <button
+            class="button-white project-favorite-heart"
+            style="font-size: 14px !important; line-height: 22px; padding: 12px 16px; width: auto;"
+            id="project-favorite-btn"
+            title="Add to favorites"
+          >
+            <svg
+              class="heart-icon"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              style="transition: fill 0.2s ease;"
+            >
+              <path
+                d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"
+                stroke="#313131"
+                stroke-width="1.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </button>
         </div>
       </div>
       <div class="project-desc">
@@ -3862,36 +3886,6 @@ function formatHandoverDate(handoverArray) {
             }
         }
 
-function toggleProjectFavorite(project, storageKey, buttonElement) {
-    console.log('🔄 toggleProjectFavorite called with:', { project, storageKey });
-    
-    const savedProjects = JSON.parse(localStorage.getItem(storageKey)) || [];
-    console.log('📦 Current saved projects:', savedProjects);
-    
-    // Convert both IDs to strings for comparison to avoid type mismatch
-    const projectId = String(project.id);
-    const projectIndex = savedProjects.findIndex(p => String(p.id) === projectId);
-    const favoriteBtn = buttonElement || document.getElementById('add-to-favorites');
-    
-    console.log('🔍 Looking for project with ID:', projectId, 'Found at index:', projectIndex);
-    
-    if (projectIndex > -1) {
-        // Remove project from favorites
-        savedProjects.splice(projectIndex, 1);
-        if (favoriteBtn) favoriteBtn.textContent = 'Add to favorites';
-        console.log('❌ Removed from favorites');
-    } else {
-        // Add project to favorites
-        savedProjects.push(project);
-        if (favoriteBtn) favoriteBtn.textContent = 'Remove from favorites';
-        console.log('✅ Added to favorites');
-    }
-
-    // Update localStorage
-    localStorage.setItem(storageKey, JSON.stringify(savedProjects));
-    console.log('💾 Updated localStorage:', savedProjects);
-}
-
 function fetchProject() {
   const url = new URL(window.location.href);
   const urlParams = new URLSearchParams(url.search);
@@ -3920,39 +3914,46 @@ function fetchProject() {
           renderMap(coordinates);
         }
 
-        // --- 2. Setup Favorites Button ---
-        const favoriteBtn = document.getElementById('add-to-favorites');
+        // --- 2. Setup Favorites Button (Heart Icon) ---
+        const favoriteBtn = document.getElementById('project-favorite-btn');
         if (favoriteBtn) {
-            console.log('🔘 Setting up favorites button for project ID:', data.id);
+            console.log('💖 Setting up favorite heart button for project ID:', data.id);
             
-            const storageKey = 'favoriteProjects';
-            const savedProjects = JSON.parse(localStorage.getItem(storageKey)) || [];
+            const heartIcon = favoriteBtn.querySelector('.heart-icon');
+            const projectId = data.id;
             
-            // Convert to string for comparison
-            const projectId = String(data.id);
-            const isProjectFavorite = savedProjects.some(p => String(p.id) === projectId);
+            // Check if project is already liked using simple-likes.js
+            const isLiked = window.isLiked ? window.isLiked(projectId) : false;
             
-            console.log('💖 Is project favorite?', isProjectFavorite);
-            console.log('📋 Saved projects:', savedProjects);
+            console.log('💗 Is project liked?', isLiked);
             
-            favoriteBtn.textContent = isProjectFavorite ? 'Remove from favorites' : 'Add to favorites';
+            // Set initial state
+            if (heartIcon) {
+                heartIcon.setAttribute('fill', isLiked ? '#313131' : 'none');
+            }
             
-            // Clone and replace the button to avoid multiple event listeners
-            const newFavoriteBtn = favoriteBtn.cloneNode(true);
-            favoriteBtn.parentNode.replaceChild(newFavoriteBtn, favoriteBtn);
-            
-            newFavoriteBtn.addEventListener('click', () => {
-                console.log('👆 Favorite button clicked!');
-                const projectSummary = {
-                    id: data.id,
-                    name: data.development_name || data.subtype,
-                    image: (data.images && data.images.length > 0) ? data.images[0].image_url : '',
-                    price: data.price
-                };
-                toggleProjectFavorite(projectSummary, storageKey, newFavoriteBtn);
+            // Add click handler
+            favoriteBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                console.log('👆 Favorite heart clicked!');
+                
+                // Use toggleLike from simple-likes.js
+                if (window.toggleLike) {
+                    const nowLiked = window.toggleLike(projectId);
+                    console.log('💝 Toggle result:', nowLiked);
+                    
+                    // Update heart icon
+                    if (heartIcon) {
+                        heartIcon.setAttribute('fill', nowLiked ? '#313131' : 'none');
+                    }
+                } else {
+                    console.error('⚠️ toggleLike function not found!');
+                }
             });
         } else {
-            console.warn('⚠️ Favorites button not found!');
+            console.warn('⚠️ Favorite heart button not found!');
         }
 		  
 		  
