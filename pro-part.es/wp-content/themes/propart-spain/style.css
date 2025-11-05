@@ -1250,7 +1250,7 @@ ul {
     
     .adapriveFilters__header {
         flex-shrink: 0;
-        padding: 20px;
+        padding: 20px 16px;
         margin: 0;
         width: 100%;
         box-sizing: border-box;
@@ -1262,7 +1262,7 @@ ul {
         flex-direction: column;
         overflow: hidden;
         margin-top: 0;
-        padding: 0 20px;
+        padding: 0 16px;
         box-sizing: border-box;
     }
     
@@ -1605,8 +1605,8 @@ ul {
         padding-bottom: max(20px, env(safe-area-inset-bottom));
         position: fixed;
         bottom: 0;
-        left: 20px;
-        right: 20px;
+        left: 16px;
+        right: 16px;
         width: auto;
         background: #fff;
         border-top: 1px solid #eee;
