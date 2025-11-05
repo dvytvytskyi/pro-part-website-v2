@@ -1420,12 +1420,18 @@ ul {
 }
 
 .adapriveFilters__main-buttons.map {
-    display: none;
+    display: none !important;
 }
 
 @media (max-width: 767px) {
     .adapriveFilters__main-buttons.map {
-        display: flex;
+        display: flex !important;
+    }
+}
+
+@media (min-width: 768px) {
+    .adapriveFilters__main-buttons.map {
+        display: none !important;
     }
 }
 
@@ -2635,17 +2641,11 @@ ul {
     display: none;
 }
 
-@media (max-width: 1409px) {
+@media (min-width: 768px) and (max-width: 1409px) {
     .filtersMap__tablet {
         display: flex;
         align-items: center;
         gap: 8px;
-    }
-}
-
-@media (max-width: 767px) {
-    .filtersMap__tablet {
-        display: none;
     }
 }
 
@@ -2670,6 +2670,14 @@ ul {
 }
 
 @media (max-width: 767px) {
+    .filtersMap__tablet-btn,
+    #filterMobile,
+    #filterMobilePhone {
+        display: none !important;
+    }
+}
+
+@media (min-width: 1410px) {
     .filtersMap__tablet-btn,
     #filterMobile,
     #filterMobilePhone {
@@ -3663,7 +3671,7 @@ hr {
     }
 
     .project-desc-totalprice {
-        font-size: 20px;
+        font-size: 18px;
     }
 
     .project-desc-price {
@@ -3701,6 +3709,18 @@ hr {
     .about-card-amenities {
         width: auto;
         gap: 10px;
+    }
+
+    .card__bottom--item-price {
+        font-size: 18px;
+    }
+
+    .project-price-title {
+        font-size: 18px;
+    }
+
+    .project-desc-from {
+        font-size: 18px;
     }
 }
 
@@ -4074,7 +4094,7 @@ hr {
     .units,
     .plans,
     .mapProjectWrapper {
-        padding-inline: 24px;
+        padding-inline: 64px;
     }
 
     .project-desc-right,
@@ -4181,6 +4201,19 @@ hr {
         background: transparent;
         height: 1px;
         margin: 0 0 32px;
+    }
+
+    .card__bottom--item-price {
+        font-size: 18px;
+    }
+
+    .project-price-title {
+        font-size: 18px;
+    }
+
+    .project-desc-from,
+    .project-desc-totalprice {
+        font-size: 18px;
     }
 }
 
@@ -5037,6 +5070,7 @@ hr {
         visibility: visible !important;
     }
     
+    /* These buttons are already hidden globally, this is just for tablet override */
     #offPlanFiltetAdaptive,
     #secondaryFiltetAdaptive,
     #rentFiltetAdaptive {
@@ -7868,6 +7902,19 @@ p {
 
     .service-title {
         font-size: 24px;
+    }
+
+    .card__bottom--item-price {
+        font-size: 18px;
+    }
+
+    .project-price-title {
+        font-size: 18px;
+    }
+
+    .project-desc-from,
+    .project-desc-totalprice {
+        font-size: 18px;
     }
 }
 
@@ -12257,9 +12304,34 @@ p {
     }
 }
 
-/* Mobile Property Type Buttons */
-.mobile-property-type-buttons {
+/* Hide adaptive filter buttons on desktop */
+#offPlanFiltetAdaptive,
+#secondaryFiltetAdaptive,
+#rentFiltetAdaptive {
     display: none;
+}
+
+.filterPropertiesWrapper__dropDownSort_header {
+    display: none;
+}
+
+@media (max-width: 767px) {
+    .filterPropertiesWrapper__dropDownSort_header {
+        display: flex;
+    }
+}
+
+/* Mobile Property Type Buttons */
+.mobile-property-type-buttons,
+.mobile-rent-type-buttons {
+    display: none;
+}
+
+@media (min-width: 768px) {
+    .mobile-property-type-buttons,
+    .mobile-rent-type-buttons {
+        display: none !important;
+    }
 }
 
 @media (max-width: 767px) {
