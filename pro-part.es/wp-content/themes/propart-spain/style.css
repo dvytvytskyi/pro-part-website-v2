@@ -2485,7 +2485,15 @@ ul {
     #offPlanSortFilterMobile,
     #offPlanHandoverFilter,
     #secondarySortFilterMobile,
-    #clearBtnSecondaryFilter {
+    #clearBtnSecondaryFilter,
+    #offPlanAdaptiveBtnSecondary,
+    #secondaryAdaptiveBtnSecondary,
+    #rentAdaptiveBtnSecondary {
+        display: none !important;
+    }
+    
+    /* Hide filter type buttons container on Secondary page */
+    #secondaryAdaptiveFilters .dapriveFilters__main-buttons {
         display: none !important;
     }
 }
