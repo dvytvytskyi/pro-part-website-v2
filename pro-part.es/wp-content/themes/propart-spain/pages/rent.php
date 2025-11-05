@@ -235,7 +235,7 @@
 
         <div class="card-parent" id="projectsSecondaryContainer"></div>
         <div id="pagination-container"></div>
-        <div class="adapriveFilters__bg" id="secondaryAdaptiveFilters">
+        <div class="adapriveFilters__bg" id="rentAdaptiveFilters">
             <div class="adapriveFilters properties">
                 <div class="adapriveFilters__header">
                     <h2 class="adapriveFilters__header-title">
@@ -7355,10 +7355,10 @@ function createSecondaryProjectCard(project) { // Renamed function for clarity
         function secondaryModalAdaptiveHandlers() {
             const filterButton = document.getElementById("secondaryFiltetAdaptive");
             const modalAdaptiveFilters = document.getElementById(
-                "secondaryAdaptiveFilters"
+                "rentAdaptiveFilters"
             );
             const closeButton = document.querySelector(
-                ".adapriveFilters__header-btnClose"
+                "#rentAdaptiveFilters .adapriveFilters__header-btnClose"
             );
             const redirectBtn = document.getElementById(
                 "redirectBtnSecondaryFilterAdaptiveSecondary"

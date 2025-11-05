@@ -1238,6 +1238,15 @@ ul {
     #secondaryAdaptiveFilters.active {
         display: flex;
     }
+    
+    /* Specific styling for rentAdaptiveFilters modal */
+    #rentAdaptiveFilters {
+        display: none;
+    }
+
+    #rentAdaptiveFilters.active {
+        display: flex;
+    }
 
 @media (max-width: 767px) {
     .adapriveFilters {
@@ -2495,6 +2504,11 @@ ul {
     
     /* Hide filter type buttons on Secondary page, but keep the dropdowns */
     #secondaryAdaptiveFilters .dapriveFilters__main-buttons > div:first-child {
+        display: none !important;
+    }
+    
+    /* Hide Off Plan/Secondary/Rent buttons on Rent page, but keep Long/Short term */
+    #rentAdaptiveFilters .dapriveFilters__main-buttons > div:first-child {
         display: none !important;
     }
     
