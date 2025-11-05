@@ -4352,6 +4352,32 @@ let allProjectsGeoJSON = null;
             }
         });
     }
+    
+    // Fix для touch scroll на iOS та Android
+    const projectsList = document.getElementById('polygonProjectsListContent');
+    if (projectsList) {
+        // Дозволяємо touch events на списку
+        projectsList.style.touchAction = 'pan-y';
+        
+        // Блокуємо event propagation для touch events
+        let isScrolling = false;
+        
+        projectsList.addEventListener('touchstart', (e) => {
+            isScrolling = false;
+        }, { passive: true });
+        
+        projectsList.addEventListener('touchmove', (e) => {
+            isScrolling = true;
+            // Дозволяємо прокрутку списку, але блокуємо body scroll
+            e.stopPropagation();
+        }, { passive: false });
+        
+        projectsList.addEventListener('touchend', (e) => {
+            if (isScrolling) {
+                e.stopPropagation();
+            }
+        }, { passive: true });
+    }
 }
 
 				function onMapLoad() {
@@ -5206,6 +5232,13 @@ function showPolygonProjectsList(projects) {
     
     // Показуємо модалку
     modal.classList.add('active');
+    
+    // На мобільних блокуємо body scroll
+    if (window.innerWidth <= 768) {
+        document.body.style.overflow = 'hidden';
+        document.body.style.position = 'fixed';
+        document.body.style.width = '100%';
+    }
 }
 
 // Функція для створення картки проекту
@@ -5274,6 +5307,13 @@ function hidePolygonProjectsList() {
     const modal = document.getElementById('polygonProjectsList');
     if (modal) {
         modal.classList.remove('active');
+    }
+    
+    // Розблокуємо body scroll на мобільних
+    if (window.innerWidth <= 768) {
+        document.body.style.overflow = '';
+        document.body.style.position = '';
+        document.body.style.width = '';
     }
 }
 

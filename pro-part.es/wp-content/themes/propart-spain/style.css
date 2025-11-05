@@ -11023,6 +11023,7 @@ p {
 		display: flex;
 		flex-direction: column;
 		overflow: hidden;
+		touch-action: none;
 	}
 	
 	.mapListProjects.active {
@@ -11053,6 +11054,15 @@ p {
 		overscroll-behavior: contain;
 		height: auto;
 		max-height: none;
+		touch-action: pan-y;
+		position: relative;
+		will-change: scroll-position;
+	}
+	
+	/* Додаткові стилі для покращення touch scroll */
+	.mapListProjects__list::-webkit-scrollbar {
+		width: 0;
+		background: transparent;
 	}
 	
 	/* Handle for draggable sheet */
