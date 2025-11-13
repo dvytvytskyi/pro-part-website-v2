@@ -2795,8 +2795,8 @@ ul {
     .rent-properties .project-desc-left img,
     .secondary-newbuilding .project-desc-left img,
     #main-content .project-desc-left img {
-        width: 100% !important;
-        max-width: 100% !important;
+        width: 75% !important;
+        max-width: 75% !important;
         height: auto !important;
         aspect-ratio: 4/3 !important;
         object-fit: cover !important;
@@ -2805,7 +2805,7 @@ ul {
         transition: transform 0.2s ease, opacity 0.2s ease !important;
         display: block !important;
         position: relative !important;
-        margin: 0 !important;
+        margin: 0 auto !important;
         padding: 0 !important;
         box-sizing: border-box !important;
         z-index: auto !important;
@@ -5749,8 +5749,8 @@ hr {
     body[class*="rentById"] .project-desc-left img,
     .rent-properties .project-desc-left img,
     .secondary-newbuilding .project-desc-left img {
-        width: 100% !important;
-        max-width: 100% !important;
+        width: 75% !important;
+        max-width: 75% !important;
         height: auto !important;
         aspect-ratio: 4/3 !important;
         object-fit: cover !important;
@@ -5759,7 +5759,7 @@ hr {
         transition: transform 0.2s ease, opacity 0.2s ease !important;
         display: block !important;
         position: relative !important;
-        margin: 0 !important;
+        margin: 0 auto !important;
         padding: 0 !important;
         box-sizing: border-box !important;
         z-index: auto !important;
