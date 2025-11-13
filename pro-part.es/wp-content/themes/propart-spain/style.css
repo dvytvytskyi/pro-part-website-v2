@@ -989,6 +989,12 @@ ul {
     background: #F6F6F6;
 }
 
+@media (max-width: 1409px) {
+    .filtersMap__clearBtn {
+        height: 42px;
+    }
+}
+
 .filtersMap__clearBtn:hover {
     background: #ff546833;
 }
@@ -1310,7 +1316,7 @@ ul {
     body[class*="map"] .adapriveFilters {
         display: none !important;
     }
-}
+
 
 .adapriveFilters.properties {
     top: 190px;
@@ -1742,7 +1748,7 @@ ul {
     flex-shrink: 0;
 }
 
-@media (max-width: 1409px) {
+@media (max-width: 767px) {
     .rent-type-toggle {
         display: none;
     }
@@ -1926,6 +1932,7 @@ ul {
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
+    overflow: hidden;
 }
 
 .marein-natura {
@@ -2020,6 +2027,44 @@ ul {
     height: auto;
     overflow: hidden;
 	border-radius: 32px;
+}
+
+.rectangle-parent .swiper-container {
+    width: 100%;
+    height: 344px;
+    overflow: hidden;
+    border-radius: 32px 32px 0 0;
+    position: relative;
+}
+
+.rectangle-parent .swiper-wrapper {
+    height: 100%;
+    display: flex;
+}
+
+.rectangle-parent .swiper-slide {
+    height: 100%;
+    width: 100%;
+    flex-shrink: 0;
+    position: relative;
+    overflow: hidden;
+}
+
+.rectangle-parent .swiper-slide img.frame-child {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    border-radius: 0;
+}
+
+.rectangle-parent .swiper-slide .image-skeleton {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
 }
 
 .card-parent a {
@@ -2683,6 +2728,132 @@ ul {
     #filterMobilePhone {
         display: none !important;
     }
+    
+    /* Приховуємо кнопку Filter на PC версії для new building, secondary та rent */
+    #offPlanFiltetAdaptive,
+    #secondaryFiltetAdaptive,
+    #rentFiltetAdaptive {
+        display: none !important;
+    }
+    
+    /* ============================================
+       PHOTO GALLERY GRID FOR SECONDARY & RENT (PC ONLY)
+       Переписано з нуля - правильний grid без накладання
+       ============================================ */
+    
+    /* Приховуємо основне фото та кнопку на secondary/rent */
+    body.page-template-secondaryById .project-desc-img,
+    body.page-template-rentById .project-desc-img,
+    body[class*="secondaryById"] .project-desc-img,
+    body[class*="rentById"] .project-desc-img,
+    body.page-template-secondaryById .project-desc-button,
+    body.page-template-rentById .project-desc-button,
+    body[class*="secondaryById"] .project-desc-button,
+    body[class*="rentById"] .project-desc-button,
+    .rent-properties .project-desc-img,
+    .rent-properties .project-desc-button,
+    .secondary-newbuilding .project-desc-img,
+    .secondary-newbuilding .project-desc-button,
+    #main-content .project-desc-img,
+    #main-content .project-desc-button {
+        display: none !important;
+    }
+    
+    /* Контейнер для фото у secondary та rent - чистий grid без обмежень по висоті */
+    body.page-template-secondaryById .project-desc-left,
+    body.page-template-rentById .project-desc-left,
+    body[class*="secondaryById"] .project-desc-left,
+    body[class*="rentById"] .project-desc-left,
+    .rent-properties .project-desc-left,
+    .secondary-newbuilding .project-desc-left,
+    #main-content .project-desc-left {
+        display: grid !important;
+        grid-template-columns: repeat(3, 1fr) !important;
+        grid-auto-rows: auto !important;
+        gap: 12px !important;
+        padding: 15px !important;
+        box-sizing: border-box !important;
+        align-items: start !important;
+        align-content: start !important;
+        position: relative !important;
+        flex: none !important;
+        margin-right: 20px !important;
+    }
+    
+    /* Стилі для фото у grid - без накладання */
+    body.page-template-secondaryById .project-desc-left img,
+    body.page-template-rentById .project-desc-left img,
+    body[class*="secondaryById"] .project-desc-left img,
+    body[class*="rentById"] .project-desc-left img,
+    .rent-properties .project-desc-left img,
+    .secondary-newbuilding .project-desc-left img,
+    #main-content .project-desc-left img {
+        width: 100% !important;
+        height: auto !important;
+        aspect-ratio: 4/3 !important;
+        object-fit: cover !important;
+        border-radius: 12px !important;
+        cursor: pointer !important;
+        transition: transform 0.2s ease, opacity 0.2s ease !important;
+        display: block !important;
+        position: static !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+    
+    body.page-template-secondaryById .project-desc-left img:hover,
+    body.page-template-rentById .project-desc-left img:hover,
+    body[class*="secondaryById"] .project-desc-left img:hover,
+    body[class*="rentById"] .project-desc-left img:hover,
+    .rent-properties .project-desc-left img:hover,
+    .secondary-newbuilding .project-desc-left img:hover {
+        transform: scale(1.02) !important;
+        opacity: 0.9 !important;
+    }
+    
+    /* Кастомний скролбар */
+    body.page-template-secondaryById .project-desc-left::-webkit-scrollbar,
+    body.page-template-rentById .project-desc-left::-webkit-scrollbar,
+    body[class*="secondaryById"] .project-desc-left::-webkit-scrollbar,
+    body[class*="rentById"] .project-desc-left::-webkit-scrollbar,
+    .rent-properties .project-desc-left::-webkit-scrollbar,
+    .secondary-newbuilding .project-desc-left::-webkit-scrollbar {
+        width: 8px !important;
+    }
+    
+    body.page-template-secondaryById .project-desc-left::-webkit-scrollbar-track,
+    body.page-template-rentById .project-desc-left::-webkit-scrollbar-track,
+    body[class*="secondaryById"] .project-desc-left::-webkit-scrollbar-track,
+    body[class*="rentById"] .project-desc-left::-webkit-scrollbar-track,
+    .rent-properties .project-desc-left::-webkit-scrollbar-track,
+    .secondary-newbuilding .project-desc-left::-webkit-scrollbar-track {
+        background: #f5f5f5 !important;
+        border-radius: 4px !important;
+    }
+    
+    body.page-template-secondaryById .project-desc-left::-webkit-scrollbar-thumb,
+    body.page-template-rentById .project-desc-left::-webkit-scrollbar-thumb,
+    body[class*="secondaryById"] .project-desc-left::-webkit-scrollbar-thumb,
+    body[class*="rentById"] .project-desc-left::-webkit-scrollbar-thumb,
+    .rent-properties .project-desc-left::-webkit-scrollbar-thumb,
+    .secondary-newbuilding .project-desc-left::-webkit-scrollbar-thumb {
+        background: #d8d8d8 !important;
+        border-radius: 4px !important;
+    }
+    
+    body.page-template-secondaryById .project-desc-left::-webkit-scrollbar-thumb:hover,
+    body.page-template-rentById .project-desc-left::-webkit-scrollbar-thumb:hover,
+    body[class*="secondaryById"] .project-desc-left::-webkit-scrollbar-thumb:hover,
+    body[class*="rentById"] .project-desc-left::-webkit-scrollbar-thumb:hover,
+    .rent-properties .project-desc-left::-webkit-scrollbar-thumb:hover,
+    .secondary-newbuilding .project-desc-left::-webkit-scrollbar-thumb:hover {
+        background: #b6b4b3 !important;
+    }
+    
+    /* Приховуємо Handover фільтр на PC версії для new building */
+    #offPlanHandoverFilter {
+        display: none !important;
+    }
 }
 
 .filtersMap__tablet-length {
@@ -2813,6 +2984,29 @@ body {
     font-size: 14px !important;
 }
 
+/* Hide favorite button completely */
+#project-favorite-btn,
+.project-favorite-heart,
+button#project-favorite-btn,
+button.project-favorite-heart,
+.project-top-buttons #project-favorite-btn,
+.project-top-buttons .project-favorite-heart,
+button[title*="favorite" i],
+button[title*="favourite" i],
+button[title*="Add to favorites" i],
+button[title*="Add to favourites" i] {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    height: 0 !important;
+    width: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    overflow: hidden !important;
+    position: absolute !important;
+    left: -9999px !important;
+}
+
 .project-desc {
     display: flex;
     justify-content: space-between;
@@ -2883,6 +3077,7 @@ body {
 }
 
 @media (max-width: 1439px) {
+    /* Grid для Off plan */
     .project-l {
         display: grid;
         grid-template-rows: repeat(6, auto);
@@ -2890,6 +3085,18 @@ body {
         column-gap: 64px;
         row-gap: 10px;
         grid-auto-flow: column;
+    }
+    
+    /* Виключення для Secondary та Rent - залишаємо flex */
+    body.page-template-secondaryById .project-l,
+    body.page-template-rentById .project-l,
+    .secondary-newbuilding .project-l,
+    .rent-properties .project-l {
+        display: flex !important;
+        flex-direction: column !important;
+        grid-template-columns: none !important;
+        grid-template-rows: none !important;
+        grid-auto-flow: unset !important;
     }
 }
 
@@ -3883,6 +4090,7 @@ hr {
     .project-top {
         display: flex;
         align-items: center;
+        justify-content: space-between;
         height: min-content;
     }
 
@@ -3925,7 +4133,6 @@ hr {
     }
 
     .project-top-buttons {
-        width: 100%;
         max-width: 461px;
         margin-left: 8px;
     }
@@ -4019,6 +4226,7 @@ hr {
 
     .project-top {
         margin-bottom: 0;
+        justify-content: space-between;
     }
 
     .gallery-nav {
@@ -4147,6 +4355,30 @@ hr {
     height: 250px;
     border-radius: 40px;
     cursor: pointer;
+    transition: opacity 0.3s ease-in;
+    opacity: 1;
+}
+
+#sliderImage.fade-out {
+    opacity: 0;
+}
+
+#galleryImage {
+    transition: opacity 0.3s ease-in;
+    opacity: 1;
+}
+
+#galleryImage.fade-out {
+    opacity: 0;
+}
+
+#projectMainImg {
+    transition: opacity 0.3s ease-in;
+    opacity: 1;
+}
+
+#projectMainImg.fade-out {
+    opacity: 0;
 }
 
 .aboutAndAmenityLine {
@@ -4173,6 +4405,9 @@ hr {
 
     .project-top {
         margin-bottom: 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
     }
 
     .project-desc-img,
@@ -4780,7 +5015,7 @@ hr {
     .header {
         padding: 24px 32px;
         margin: 0;
-        height: 48px;
+        height: 100px;
         display: flex;
         flex-direction: row;
         justify-content: space-between;
@@ -4789,22 +5024,99 @@ hr {
         border-bottom: 1px solid #d8d8d8;
     }
     
+    /* Here Section (Hero) Styles for Tablet Landscape */
     .headerBlock {
         display: flex;
         align-items: center;
-        gap: 16px;
+        justify-content: center;
+        padding-top: 80px;
+        height: calc(100vh - 48px);
+        min-height: 600px;
+        background-size: 100% 55%, cover;
+        background-position: top center;
     }
     
     .headerContent {
         display: flex;
+        flex-direction: column;
         align-items: center;
-        gap: 12px;
+        width: 100%;
+        max-width: 900px;
+        padding: 0 48px;
+        gap: 16px;
+    }
+    
+    .mainHeader {
+        font-size: 48px;
+        font-weight: 600;
+        text-align: center;
+        line-height: 1.2;
+        margin: 0;
+    }
+    
+    .mainDescription {
+        font-size: 22px;
+        text-align: center;
+        margin: 0 0 32px 0;
+        line-height: 28px;
+        color: rgba(49, 49, 49, 0.5);
+    }
+    
+    .mainPageActions {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        width: 100%;
+        max-width: 900px;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    
+    .areaDropdown {
+        width: 280px;
+        height: 48px;
+    }
+    
+    .wrapperMainPageVisibleProjects {
+        display: flex;
+        gap: 8px;
+    }
+    
+    .wrapperMainPageVisibleProjects__btn {
+        padding: 12px 20px;
+        font-size: 14px;
     }
     
     .headerActions {
         display: flex;
         align-items: center;
         gap: 12px;
+    }
+    
+    .searchButton {
+        padding: 12px 24px;
+        font-size: 14px;
+        
+    }
+    
+    .editButton {
+        width: 48px;
+        height: 48px;
+    }
+    
+    .dropdownTrigger {
+        font-size: 14px;
+        padding: 14px 16px;
+    }
+    
+    .areaOptionsContainer {
+        max-height: 350px;
+        font-size: 14px;
+    }
+    
+    .areaLabel {
+        font-size: 14px;
+        height: 36px;
     }
     
     .menuButton {
@@ -4867,22 +5179,128 @@ hr {
         display: none !important;
     }
     
-    /* Приховуємо десктопні фільтри на планшеті */
+    /* Показуємо десктопні фільтри на планшеті горизонтальній версії */
     .filterPropertiesWrapper__dropdownds {
-        display: none !important;
+        display: flex !important;
+        width: 100%;
+        align-items: flex-end;
+        gap: 8px;
+        flex-wrap: nowrap;
+        flex: 1 1 auto;
     }
     
     .filterPropertiesWrapper__dropDown {
-        flex: 0 1 auto;
-        min-width: 70px;
-        max-width: 130px;
+        flex: 1 1 0;
+        min-width: 0;
+        max-width: none;
+        box-sizing: border-box;
+        position: relative;
+    }
+    
+    .filterPropertiesWrapper__dropDown_header {
+        font-size: 13px;
+        padding: 14px 18px;
+        height: 48px;
+        min-height: 48px;
+        white-space: nowrap;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 6px;
         box-sizing: border-box;
     }
     
+    .filterPropertiesWrapper__dropDown_header svg {
+        width: 18px;
+        height: 18px;
+        flex-shrink: 0;
+    }
+    
+    .filterPropertiesWrapper__dropDown_body {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        z-index: 1000;
+        background: white;
+        border-radius: 20px;
+        border: 0.6px solid #d8d8d8;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        min-width: 180px;
+        max-height: 280px;
+        overflow-y: auto;
+        font-size: 13px;
+        margin-top: 4px;
+    }
+    
+    .filterPropertiesWrapper__dropDown_body.active {
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .filterPropertiesWrapper__dropDown_item {
+        padding: 8px 12px;
+        font-size: 13px;
+    }
+    
+    .filterPropertiesWrapper__dropDown_body.isPrice {
+        min-width: 320px;
+    }
+    
+    .filterPropertiesWrapper__dropDown_body.isPrice.active {
+        display: flex;
+        flex-direction: row;
+        gap: 8px;
+    }
+    
+    .filterPropertiesWrapper__dropDown_subDropdown {
+        flex: 1;
+    }
+    
+    .filterPropertiesWrapper__dropDown_header.isPriceDropDownHeader {
+        font-size: 12px;
+        padding: 8px 10px;
+        min-height: 36px;
+    }
+    
+    .filterPropertiesWrapper__dropDown_body.isPrice2 {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        z-index: 1001;
+        background: white;
+        border-radius: 20px;
+        border: 0.6px solid #d8d8d8;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        min-width: 140px;
+        max-height: 250px;
+        overflow-y: auto;
+        margin-top: 4px;
+    }
+    
+    .filterPropertiesWrapper__dropDown_body.isPrice2.active {
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .filterPropertiesWrapper__dropDown_list.isPrice {
+        font-size: 12px;
+    }
+    
+    /* Приховуємо адаптивні фільтри на планшеті */
+    .filterPropertiesWrapper__adapriveWrapper {
+        display: none !important;
+    }
+    
+    .filtersMap__tablet-btn {
+        display: none !important;
+    }
+    
     .filterPropertiesWrapper__inputWrapper {
-        flex: 1 1 100%;
-        max-width: 100%;
-        margin-bottom: 12px;
+        flex: 0 0 auto;
+        max-width: 300px;
+        margin-bottom: 0;
         height: 44px !important;
         box-sizing: border-box;
     }
@@ -4893,12 +5311,20 @@ hr {
     }
     
     .filterPropertiesWrapper {
-        padding: 16px 12px;
-        flex-direction: column;
-        align-items: stretch;
+        padding: 20px 32px;
+        flex-direction: row;
+        align-items: flex-end;
+        gap: 12px;
         box-sizing: border-box;
-        max-width: 100vw;
-        overflow-x: hidden;
+        width: 100%;
+        max-width: 100%;
+        overflow-x: visible;
+        flex-wrap: nowrap;
+    }
+    
+    .newbuildingblock .filterPropertiesWrapper {
+        padding: 20px 32px;
+        width: 100%;
     }
     
     .filtersMap__clearBtn {
@@ -4906,15 +5332,17 @@ hr {
         width: auto;
         padding: 8px 10px;
         margin-top: 0;
-        height: 38px;
+        height: 48px;
         font-size: 12px;
         min-width: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
     
     /* Стилі для dropdown елементів */
     .filterPropertiesWrapper__dropDown_header {
         font-size: 12px;
-        padding: 8px 6px;
         min-height: 38px;
         white-space: nowrap;
         display: flex;
@@ -5174,6 +5602,267 @@ hr {
     -btnConfirm {
         height: 52px !important;
         font-size: 16px !important;
+    }
+    
+    /* Footer styles for tablet landscape */
+    .footer {
+        padding: 32px 48px;
+    }
+    
+    .footerTop {
+        flex-direction: row;
+        align-items: flex-start;
+        gap: 32px;
+    }
+    
+    .contactsContainer {
+        width: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+    }
+    
+    .contactInfoContainer {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 24px;
+        margin: 0;
+    }
+    
+    .address {
+        margin-bottom: 0;
+        font-size: 13px;
+        line-height: 20px;
+        max-width: 280px;
+    }
+    
+    .phone {
+        margin-bottom: 0;
+        font-size: 14px;
+        white-space: nowrap;
+    }
+    
+    .logoContainer {
+        margin-bottom: 16px;
+    }
+    
+    .footerSocial {
+        margin-left: auto;
+        gap: 20px;
+    }
+    
+    .linksContainer {
+        gap: 64px;
+    }
+    
+    /* ============================================
+       PROJECT-L STYLES FOR TABLETS
+       Базуються на ПК версії: flex, одна колонка
+       ============================================ */
+    
+    /* Базовий стиль для всіх .project-l на планшеті - як на ПК */
+    .project-l {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 8px !important;
+        grid-template-columns: none !important;
+        grid-template-rows: none !important;
+        grid-auto-flow: unset !important;
+    }
+    
+    /* Тільки для Off plan з project-r: grid для project-inner */
+    .project-inner:has(.project-r) {
+        display: grid !important;
+        grid-template-columns: 1fr 1fr !important;
+        gap: 32px !important;
+        column-gap: 64px !important;
+    }
+    
+    /* Але всередині project-l залишається flex (як на ПК) */
+    .project-inner:has(.project-r) .project-l {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 8px !important;
+        grid-template-columns: none !important;
+        grid-template-rows: none !important;
+        grid-auto-flow: unset !important;
+    }
+    
+    .project-inner:has(.project-r) .project-r {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 8px !important;
+    }
+    
+    /* Secondary та Rent - flex layout для project-l */
+    .secondary-newbuilding .project-l,
+    .rent-properties .project-l,
+    body.page-template-secondaryById .project-l,
+    body.page-template-rentById .project-l {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 8px !important;
+    }
+    
+    /* Secondary та Rent - grid для project-desc-left на планшетах без обмежень по висоті */
+    body.page-template-secondaryById .project-desc-left,
+    body.page-template-rentById .project-desc-left,
+    body[class*="secondaryById"] .project-desc-left,
+    body[class*="rentById"] .project-desc-left,
+    .rent-properties .project-desc-left,
+    .secondary-newbuilding .project-desc-left {
+        display: grid !important;
+        grid-template-columns: repeat(3, 1fr) !important;
+        grid-auto-rows: auto !important;
+        gap: 12px !important;
+        padding: 15px !important;
+        box-sizing: border-box !important;
+        align-items: start !important;
+        align-content: start !important;
+        position: relative !important;
+        flex: none !important;
+        margin-right: 20px !important;
+    }
+    
+    /* Стилі для фото у grid на планшетах - без накладання */
+    body.page-template-secondaryById .project-desc-left img,
+    body.page-template-rentById .project-desc-left img,
+    body[class*="secondaryById"] .project-desc-left img,
+    body[class*="rentById"] .project-desc-left img,
+    .rent-properties .project-desc-left img,
+    .secondary-newbuilding .project-desc-left img {
+        width: 100% !important;
+        height: auto !important;
+        aspect-ratio: 4/3 !important;
+        object-fit: cover !important;
+        border-radius: 12px !important;
+        cursor: pointer !important;
+        transition: transform 0.2s ease, opacity 0.2s ease !important;
+        display: block !important;
+        position: static !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+    
+    /* Project action buttons padding for tablets */
+    .project-action-buttons {
+        padding: 20px 32px 20px 32px !important;
+    }
+    
+    /* Map wrapper padding for tablets */
+    .mapProjectWrapper {
+        padding-inline: 64px !important;
+    }
+}
+
+/* ============================================
+   VERTICAL TABLET (PORTRAIT) - 768px to 1024px
+   Виправлення фільтрів для new building
+   ============================================ */
+@media screen and (min-width: 768px) and (max-width: 1024px) {
+    /* Виправлення фільтрів для new building на вертикальному планшеті */
+    .newbuildingblock .filterPropertiesWrapper,
+    .filterPropertiesWrapper {
+        padding: 16px 16px !important;
+        flex-wrap: wrap !important;
+        gap: 8px !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        overflow-x: hidden !important;
+        box-sizing: border-box !important;
+    }
+    
+    .filterPropertiesWrapper__dropdownds {
+        flex-wrap: wrap !important;
+        gap: 8px !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+    }
+    
+    .filterPropertiesWrapper__dropDown {
+        flex: 1 1 calc(50% - 4px) !important;
+        min-width: calc(50% - 4px) !important;
+        max-width: calc(50% - 4px) !important;
+        box-sizing: border-box !important;
+    }
+    
+    .filterPropertiesWrapper__dropDown_header {
+        font-size: 11px !important;
+        padding: 10px 12px !important;
+        height: 40px !important;
+        min-height: 40px !important;
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+        box-sizing: border-box !important;
+    }
+    
+    .filterPropertiesWrapper__inputWrapper {
+        flex: 1 1 100% !important;
+        max-width: 100% !important;
+        width: 100% !important;
+        margin-bottom: 8px !important;
+        box-sizing: border-box !important;
+    }
+    
+    .filterPropertiesWrapper__inputWrapper_input {
+        font-size: 11px !important;
+        padding: 10px 12px !important;
+        box-sizing: border-box !important;
+    }
+    
+    /* Для Price dropdown - повна ширина на вертикальному планшеті */
+    .filterPropertiesWrapper__dropDown_body.isPrice {
+        min-width: 100% !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+    }
+    
+    /* Виправлення фільтрів для rent на вертикальному планшеті */
+    .rentProperties .filterPropertiesWrapper,
+    body[class*="rent"] .filterPropertiesWrapper,
+    .rent-properties .filterPropertiesWrapper {
+        padding: 16px 16px !important;
+        flex-wrap: wrap !important;
+        gap: 8px !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        overflow-x: hidden !important;
+        box-sizing: border-box !important;
+    }
+    
+    /* Rent type toggle кнопки - краще розташування на вертикальному планшеті */
+    .rent-type-toggle {
+        width: 100% !important;
+        max-width: 100% !important;
+        margin-bottom: 12px !important;
+        box-sizing: border-box !important;
+    }
+    
+    .rent-type-toggle .wrapperMapPageVisibleProjects__btn {
+        flex: 1 !important;
+        padding: 10px 12px !important;
+        font-size: 12px !important;
+        box-sizing: border-box !important;
+    }
+    
+    /* Запобігаємо виходу dropdown'ів за межі */
+    .filterPropertiesWrapper__dropDown_body {
+        max-width: calc(100vw - 32px) !important;
+        box-sizing: border-box !important;
+    }
+    
+    /* Clear button */
+    .filtersMap__clearBtn {
+        flex: 0 0 auto !important;
+        padding: 8px 12px !important;
+        font-size: 11px !important;
+        height: 40px !important;
+        min-width: auto !important;
+        box-sizing: border-box !important;
     }
 }
 
@@ -10944,7 +11633,7 @@ p {
 }
 
 .mapProjectWrapper {
-    padding-inline: 24px;
+    padding-inline: 64px;
     box-sizing: border-box;
     margin-bottom: 10px;
     z-index: 1;
@@ -11452,6 +12141,11 @@ p {
         width: 100%;
 		display: flex;
 		justify-content: center;
+    }
+    
+    /* Приховуємо кнопку Rent на мобільних */
+    #mainRentVisible {
+        display: none;
     }
 	
 	.wrapperMainPageVisibleProjects {
